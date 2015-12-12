@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="400.0" prefWidth="753.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vsu.sc.grishchenko.molecularclusters.view.Controller">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="Файл">
+          <items>
+            <MenuItem mnemonicParsing="false" text="New" visible="false" />
+            <MenuItem mnemonicParsing="false" onAction="#open" text="Открыть" />
+            <Menu mnemonicParsing="false" text="Open Recent" visible="false" />
+            <MenuItem mnemonicParsing="false" text="Close" visible="false" />
+            <MenuItem mnemonicParsing="false" onAction="#save" text="Сохранить" />
+            <MenuItem mnemonicParsing="false" text="Save As…" visible="false" />
+            <MenuItem mnemonicParsing="false" text="Revert" visible="false" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" visible="false" />
+            <MenuItem mnemonicParsing="false" text="Quit" visible="false" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit" visible="false">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem mnemonicParsing="false" text="Copy" />
+            <MenuItem mnemonicParsing="false" text="Paste" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Select All" />
+            <MenuItem mnemonicParsing="false" text="Unselect All" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help" visible="false">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <SplitPane dividerPositions="0.13636363636363635" prefHeight="375.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" SplitPane.resizableWithParent="false">
+                     <children>
+                        <ToolBar orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                              <Button fx:id="add" mnemonicParsing="false" onAction="#add" prefWidth="80.0" text="Добавить" />
+                              <Button fx:id="delete" mnemonicParsing="false" onAction="#delete" prefWidth="80.0" text="Удалить" />
+                              <Button fx:id="clear" mnemonicParsing="false" onAction="#clear" prefWidth="80.0" text="Очистить" />
+                              <Separator prefWidth="200.0" />
+                            <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefWidth="80.0" text="Запустить" />
+                            <Button fx:id="startFromFile" mnemonicParsing="false" onAction="#startFromFile" prefWidth="80.0" text="Из файла" />
+                              <Separator prefWidth="200.0" />
+                              <SplitMenuButton mnemonicParsing="false" prefWidth="80.0" text="Анализ">
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#exp1" text="Эксперимент 1" />
+                                  <MenuItem mnemonicParsing="false" onAction="#exp2" text="Эксперимент 2" />
+                                </items>
+                              </SplitMenuButton>
+                            <Button fx:id="analyzeFromFile" mnemonicParsing="false" onAction="#analyzeFromFile" prefWidth="80.0" text="Из файла" />
+                            <Button fx:id="analyzeFromFolder" mnemonicParsing="false" onAction="#analyzeFromFolder" prefWidth="80.0" text="Из папки" />
+                          </items>
+                        </ToolBar>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <ScrollPane layoutY="-1.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                           <content>
+                              <VBox fx:id="container" prefHeight="163.0" prefWidth="594.0">
+                                 <children>
+                                    <HBox prefHeight="35.0" prefWidth="603.0">
+                                       <children>
+                                          <CheckBox mnemonicParsing="false" prefHeight="105.0" prefWidth="21.0" />
+                                          <TextField prefHeight="25.0" prefWidth="36.0" text="r1" />
+                                          <Label prefHeight="25.0" prefWidth="25.0" text="'' = " />
+                                          <TextField prefHeight="25.0" prefWidth="221.0" text="0" />
+                                          <Label prefHeight="25.0" prefWidth="2.0" text="(" />
+                                          <TextField prefWidth="40.0" text="0.0" />
+                                          <Label prefHeight="25.0" prefWidth="0.0" text=", " />
+                                          <TextField prefWidth="40.0" text="0.0" />
+                                          <Label prefHeight="25.0" prefWidth="0.0" text=", " />
+                                          <TextField layoutX="315.0" layoutY="15.0" prefWidth="40.0" text="0.0" />
+                                          <Label prefHeight="25.0" prefWidth="0.0" text=")(" />
+                                          <TextField layoutX="405.0" layoutY="15.0" prefWidth="40.0" text="0.0" />
+                                          <Label prefHeight="25.0" prefWidth="0.0" text=", " />
+                                          <TextField layoutX="445.0" layoutY="15.0" prefWidth="40.0" text="0.0" />
+                                          <Label prefHeight="25.0" prefWidth="0.0" text=", " />
+                                          <TextField layoutX="478.0" layoutY="15.0" prefWidth="40.0" text="0.0" />
+                                          <Label prefHeight="25.0" prefWidth="0.0" text=")" />
+                                       </children>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>

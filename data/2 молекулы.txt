@@ -1,0 +1,1 @@
+[{"label":"r1","accelerationEquation":"-0.5*(r$+10)","initialPosition":[-3.0,-3.0,-3.0],"initialVelocity":[1.0,1.0,1.0]},{"label":"r2","accelerationEquation":"-0.5*(r$-10)","initialPosition":[3.0,3.0,3.0],"initialVelocity":[-1.0,-1.0,-1.0]}]
