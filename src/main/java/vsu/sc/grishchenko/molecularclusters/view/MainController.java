@@ -244,18 +244,27 @@ public class MainController {
                 result = gson.fromJson(fileReader, result.getClass());
                 AnalyzeResult analyzeResult = Analyzer.getParams(result);
 
-                new InfoDialog("Рассотояние до оси трубки в начальный момент: " + analyzeResult.getRadius() + "\n" +
-                        "Начальный угол с осью трубки: " + analyzeResult.getFi() + "\n" +
-                        "Начальный угол с горизонтальной пролоскостью XY: " + analyzeResult.getTeta() + "\n" +
-                        "Длина трубки: " + analyzeResult.getPathLength() / analyzeResult.getPathLengthToTubeLength() + "\n" +
+                new InfoDialog(String.format("Рассотояние до оси трубки в начальный момент: %.3f\n" +
+                        "Начальный угол с осью трубки: %.3f\n" +
+                        "Начальный угол с горизонтальной пролоскостью XY: %.3f\n" +
+                        "Длина трубки: %.3f\n" +
                         "\n" +
-                        "Длина пройденного пути: " + analyzeResult.getPathLength() + "\n" +
-                        "Длина пройденного пути / длина трубки: " + analyzeResult.getPathLengthToTubeLength() + "\n" +
+                        "Длина пройденного пути: %.3f\n" +
+                        "Длина пройденного пути / длина трубки: %.3f\n" +
                         "\n" +
-                        "Средняя скорость: " + analyzeResult.getAvgSpeed() + "\n" +
-                        "Средняя длина пробега: " + analyzeResult.getAvgFreePath() + "\n" +
+                        "Средняя скорость: %.3f\n" +
+                        "Средняя длина пробега: %.3f\n" +
                         "\n" +
-                        "Коэффициент диффузии: " + analyzeResult.getDiffusionCoeff() + "\n")
+                        "Коэффициент диффузии: %.3f",
+                        analyzeResult.getRadius(),
+                        analyzeResult.getFi(),
+                        analyzeResult.getTeta(),
+                        analyzeResult.getPathLength() / analyzeResult.getPathLengthToTubeLength(),
+                        analyzeResult.getPathLength(),
+                        analyzeResult.getPathLengthToTubeLength(),
+                        analyzeResult.getAvgSpeed(),
+                        analyzeResult.getAvgFreePath(),
+                        analyzeResult.getDiffusionCoeff()))
                         .start(new Stage());
 
             } catch (IOException ex) {
