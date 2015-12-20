@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<VBox prefHeight="400.0" prefWidth="753.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vsu.sc.grishchenko.molecularclusters.view.Controller">
+<VBox prefHeight="400.0" prefWidth="753.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vsu.sc.grishchenko.molecularclusters.view.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -19,7 +16,7 @@
             <MenuItem mnemonicParsing="false" onAction="#save" text="Сохранить" />
             <MenuItem mnemonicParsing="false" text="Save As…" visible="false" />
             <MenuItem mnemonicParsing="false" text="Revert" visible="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" visible="false" />
+            <MenuItem mnemonicParsing="false" onAction="#settings" text="Настройки…" />
             <MenuItem mnemonicParsing="false" text="Quit" visible="false" />
           </items>
         </Menu>

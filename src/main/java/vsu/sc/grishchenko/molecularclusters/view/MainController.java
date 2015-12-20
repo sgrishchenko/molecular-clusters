@@ -1,10 +1,6 @@
 package vsu.sc.grishchenko.molecularclusters.view;
 
 import com.google.gson.Gson;
-import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
-import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
-import vsu.sc.grishchenko.molecularclusters.experiment.ImportantData;
-import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -21,15 +17,23 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
+import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
+import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
+import vsu.sc.grishchenko.molecularclusters.experiment.ImportantData;
+import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class Controller {
+public class MainController {
     public VBox container;
     public FileChooser fileChooser = new FileChooser();
     public DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -282,5 +286,16 @@ public class Controller {
             saveExperiments(file.getPath() + "/", experiments);
             new InfoDialog("Параметры экспериментов\nуспешно пересчитаны").start(new Stage());
         }
+    }
+
+    public void settings(ActionEvent actionEvent) throws Exception {
+        GlobalSettings.ExperimentSettings experimentSettings = GlobalSettings.getInstance().experimentSettings;
+        if (experimentSettings.getMovingPointLabel() == null) {
+            List<MotionEquationData> dataList = read();
+            if (dataList != null && !dataList.isEmpty()) {
+                experimentSettings.setMovingPointLabel(dataList.get(dataList.size() - 1).getLabel());
+            }
+        }
+        new Settings().start(new Stage());
     }
 }

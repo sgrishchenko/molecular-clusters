@@ -1,23 +1,24 @@
 package vsu.sc.grishchenko.molecularclusters.view;
 
-import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
-import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import javafx.application.Application;
-
 import javafx.geometry.Point3D;
-import javafx.scene.*;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.stage.Stage;
+import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
+import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
+import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import vsu.sc.grishchenko.molecularclusters.math.Solver;
-import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class View3D extends Application {
@@ -45,18 +46,7 @@ public class View3D extends Application {
 
     private static final double modifierFactor = 0.5;
 
-    private static int countSteps = 500;
-    private static double stepSize = 0.001;
-    private static int animateStepSize = 15;
     private static final double scale = 12;
-
-    static {
-        Properties prop = ResourceFactory.getProperties(View3D.class, "view.properties");
-
-        stepSize = Double.parseDouble(prop.getProperty("stepSize"));
-        countSteps = Integer.parseInt(prop.getProperty("countSteps"));
-        animateStepSize = Integer.parseInt(prop.getProperty("animateStepSize"));
-    }
 
     double mousePosX;
     double mousePosY;
@@ -118,10 +108,11 @@ public class View3D extends Application {
     }
 
     private void buildMolecule() {
+        GlobalSettings.ViewSettings settings = GlobalSettings.getInstance().viewSettings;
 
         Map<String, List<Double>> result = trajectories != null
                 ? trajectories
-                : Solver.solveVerlet(equations, 0., countSteps, stepSize);
+                : Solver.solveVerlet(equations, 0., settings.getCountSteps(), settings.getStepSize());
 
         List<List<Point3D>> trajectories = new ArrayList<>();
         List<Point3D> points;
@@ -145,7 +136,7 @@ public class View3D extends Application {
             trajectories.add(points);
         }
 
-        new Thread(new RunAnimate(trajectories, moleculeGroup, animateStepSize, scale)).start();
+        new Thread(new RunAnimate(trajectories, moleculeGroup, settings.getAnimateStepSize(), scale)).start();
         world.getChildren().addAll(moleculeGroup);
     }
 

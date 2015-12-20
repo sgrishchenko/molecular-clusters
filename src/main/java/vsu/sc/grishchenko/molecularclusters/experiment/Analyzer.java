@@ -1,34 +1,23 @@
 package vsu.sc.grishchenko.molecularclusters.experiment;
 
 import com.google.gson.Gson;
+import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import vsu.sc.grishchenko.molecularclusters.math.Solver;
-import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 public final class Analyzer {
-    private static double initialY = -3.;
-    private static double stepSize = 0.001;
-    private static int countSteps = 1000;
-    private static int chiralityParam1 = 4;
-    private static int chiralityParam2 = 4;
-
-    static {
-        Properties prop = ResourceFactory.getProperties(Analyzer.class, "experiment.properties");
-
-        initialY = Double.parseDouble(prop.getProperty("initialY"));
-        stepSize = Double.parseDouble(prop.getProperty("stepSize"));
-        countSteps = Integer.parseInt(prop.getProperty("countSteps"));
-        chiralityParam1 = Integer.parseInt(prop.getProperty("chiralityParam1"));
-        chiralityParam2 = Integer.parseInt(prop.getProperty("chiralityParam2"));
-    }
-
     public static Gson gson = new Gson();
 
     public static String createExperimentDirectory(String filePath) {
@@ -48,10 +37,12 @@ public final class Analyzer {
     }
 
     public static List<List<AnalyzeResult>> experiment1(String filePath, List<MotionEquationData> dataList) {
+        GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
+
         List<List<AnalyzeResult>> results = new ArrayList<>();
 
-        double radius = getTubeRadius(chiralityParam1, chiralityParam2);
-        double v = 75;
+        double radius = getTubeRadius(settings.getChirality()[0], settings.getChirality()[1]);
+        double v = settings.getInitialVelocity();
 
         double fi;
         double r;
@@ -63,10 +54,14 @@ public final class Analyzer {
                 r = radius * i / 10;
                 fi = Math.toRadians(90 * j / 10);
 
-                lastData.setInitialPosition(new Double[]{-r, initialY, 0.});
+                lastData.setInitialPosition(new Double[]{
+                        settings.getInitialPosition()[0] - r,
+                        settings.getInitialPosition()[1],
+                        settings.getInitialPosition()[2]
+                });
                 lastData.setInitialVelocity(new Double[]{Math.sin(fi) * v, Math.cos(fi) * v, 0.});
 
-                Map<String, List<Double>> solveResult = Solver.solveVerlet(dataList, 0, countSteps, stepSize);
+                Map<String, List<Double>> solveResult = Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
                 File out = new File(filePath + "exp_" + i + "_" + j + ".txt");
                 try (FileWriter writer = new FileWriter(out)) {
                     writer.write(gson.toJson(solveResult));
@@ -85,6 +80,8 @@ public final class Analyzer {
                                                         List<MotionEquationData> dataList,
                                                         Map<String, List<Double>> solvingSystemResult) {
 
+        GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
+
         List<List<AnalyzeResult>> results = new ArrayList<>();
 
         AnalyzeResult params = getParams(solvingSystemResult);
@@ -98,14 +95,17 @@ public final class Analyzer {
             MotionEquationData lastData = dataList.get(dataList.size() - 1);
             teta = Math.toRadians(90 - 90 * j / 9);
 
-            lastData.setInitialPosition(new Double[]{-r * Math.sin(teta), initialY, r * Math.cos(teta)});
+            lastData.setInitialPosition(new Double[]{
+                    settings.getInitialPosition()[0] - r * Math.sin(teta),
+                    settings.getInitialPosition()[1],
+                    settings.getInitialPosition()[2] + r * Math.cos(teta)});
             lastData.setInitialVelocity(new Double[]{
                     Math.sin(fi) * Math.sin(teta) * v,
                     Math.cos(fi) * v,
                     -Math.cos(teta) * v
             });
 
-            Map<String, List<Double>> solveResult = Solver.solveVerlet(dataList, 0, countSteps, stepSize);
+            Map<String, List<Double>> solveResult = Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
             File out = new File(filePath + "exp_" + j + ".txt");
             try (FileWriter writer = new FileWriter(out)) {
                 writer.write(gson.toJson(solveResult));
@@ -189,7 +189,7 @@ public final class Analyzer {
                 pdx = dx;
                 pdy = dy;
                 pdz = dz;
-                time += stepSize;
+                time += GlobalSettings.getInstance().experimentSettings.getStepSize();
                 S += r;
                 System.out.println(r);
             }
