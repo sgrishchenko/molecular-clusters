@@ -244,21 +244,21 @@ public class MainController {
                 result = gson.fromJson(fileReader, result.getClass());
                 AnalyzeResult analyzeResult = Analyzer.getParams(result);
 
-                new InfoDialog(String.format("Рассотояние до оси трубки в начальный момент: %.3f\n" +
-                        "Начальный угол с осью трубки: %.3f\n" +
-                        "Начальный угол с горизонтальной пролоскостью XY: %.3f\n" +
-                        "Длина трубки: %.3f\n" +
+                new InfoDialog(String.format("Расстояние до оси трубки в начальный момент: %.3f Å\n" +
+                        "Начальный угол с осью трубки: %d°\n" +
+                        "Начальный угол с горизонтальной пролоскостью XY: %d°\n" +
+                        "Длина трубки: %.3f Å\n" +
                         "\n" +
-                        "Длина пройденного пути: %.3f\n" +
+                        "Длина пройденного пути: %.3f Å\n" +
                         "Длина пройденного пути / длина трубки: %.3f\n" +
                         "\n" +
-                        "Средняя скорость: %.3f\n" +
-                        "Средняя длина пробега: %.3f\n" +
+                        "Средняя скорость: %.3f Å/τ₀\n" +
+                        "Средняя длина пробега: %.3f Å\n" +
                         "\n" +
-                        "Коэффициент диффузии: %.3f",
+                        "Коэффициент диффузии: %.3f Å²/τ₀",
                         analyzeResult.getRadius(),
-                        analyzeResult.getFi(),
-                        analyzeResult.getTeta(),
+                        Math.round(analyzeResult.getFi()),
+                        Math.round(analyzeResult.getTeta()),
                         analyzeResult.getPathLength() / analyzeResult.getPathLengthToTubeLength(),
                         analyzeResult.getPathLength(),
                         analyzeResult.getPathLengthToTubeLength(),
