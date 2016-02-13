@@ -7,8 +7,8 @@
    <children>
       <HBox layoutX="100.0" layoutY="321.0" prefHeight="31.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0">
          <children>
-            <Button defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="70.0" text="OK" onAction="#setSettings"/>
-            <Button cancelButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="70.0" text="Отмена" onAction="#cancelSettings"/>
+            <Button defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#setSettings" prefWidth="70.0" text="OK" />
+            <Button cancelButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#cancelSettings" prefWidth="70.0" text="Отмена" />
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -32,7 +32,7 @@
                           </rowConstraints>
                            <children>
                               <Label text="Количество итераций:" />
-                              <Label text="Величина шага:" GridPane.rowIndex="1" />
+                              <Label text="Величина шага (τₒ):" GridPane.rowIndex="1" />
                               <Label text="Скорость воспроизведения анимации:" textOverrun="WORD_ELLIPSIS" wrapText="true" GridPane.rowIndex="2" />
                               <TextField fx:id="viewCountSteps" GridPane.columnIndex="1" />
                               <TextField fx:id="viewStepSize" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -53,7 +53,7 @@
                         <GridPane prefHeight="371.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <Label text="Количество итераций:" GridPane.rowIndex="4" />
-                              <Label text="Величина шага:" GridPane.rowIndex="5" />
+                              <Label text="Величина шага (τₒ):" GridPane.rowIndex="5" />
                               <TextField fx:id="experimentCountSteps" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Label text="Метка движущейся точки:" />
                               <TextField fx:id="movingPointLabel" GridPane.columnIndex="1" />

@@ -42,7 +42,7 @@ public class View3D extends Application {
     private static final double SHIFT_MULTIPLIER = 10.0;
     private static final double MOUSE_SPEED = 0.1;
     private static final double ROTATION_SPEED = 2.0;
-    private static final double TRACK_SPEED = 0.3;
+    private static final double TRACK_SPEED = 3.0;
 
     private static final double modifierFactor = 0.5;
 
@@ -171,7 +171,10 @@ public class View3D extends Application {
                         mouseDeltaY * modifierFactor * modifier * ROTATION_SPEED);  // -
             } else if (me.isSecondaryButtonDown()) {
                 double z = camera.getTranslateZ();
-                double newZ = z + Math.max(mouseDeltaX, mouseDeltaY) * MOUSE_SPEED * modifier;
+                double delta = Math.max(Math.abs(mouseDeltaX), Math.abs(mouseDeltaY));
+                if (delta == Math.abs(mouseDeltaX) && mouseDeltaX < 0) modifier *= -1;
+                if (delta == Math.abs(mouseDeltaY) && mouseDeltaY < 0) modifier *= -1;
+                double newZ = z + delta * MOUSE_SPEED * modifier * 10;
                 camera.setTranslateZ(newZ);
             } else if (me.isMiddleButtonDown()) {
                 cameraXform2.t.setX(cameraXform2.t.getX() +
