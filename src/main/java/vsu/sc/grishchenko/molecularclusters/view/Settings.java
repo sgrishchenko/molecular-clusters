@@ -10,7 +10,7 @@ import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 public class Settings extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(ResourceFactory.getResource(Main.class, "settings.fxml"));
+        Parent root = FXMLLoader.load(ResourceFactory.getResource(this, "settings.fxml"));
         stage.setTitle("Настройки");
         stage.setScene(new Scene(root));
         stage.show();

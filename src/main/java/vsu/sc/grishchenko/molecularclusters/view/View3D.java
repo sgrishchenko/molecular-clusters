@@ -1,25 +1,34 @@
 package vsu.sc.grishchenko.molecularclusters.view;
 
+import com.google.gson.Gson;
 import javafx.application.Application;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
 import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import vsu.sc.grishchenko.molecularclusters.math.Solver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static javafx.application.Platform.runLater;
 
 public class View3D extends Application {
 
@@ -31,6 +40,10 @@ public class View3D extends Application {
     final Xform cameraXform = new Xform();
     final Xform cameraXform2 = new Xform();
     final Xform cameraXform3 = new Xform();
+    public FileChooser fileChooser = new FileChooser();
+    private Thread animationThread;
+    private RunAnimate animation;
+    public static Gson gson = new Gson();
     private static final double CAMERA_INITIAL_DISTANCE = -450;
     private static final double CAMERA_INITIAL_X_ANGLE = 60.0;
     private static final double CAMERA_INITIAL_Y_ANGLE = 320.0;
@@ -55,15 +68,21 @@ public class View3D extends Application {
     double mouseDeltaX;
     double mouseDeltaY;
 
-    List<MotionEquationData> equations;
+    boolean isButtonPressed;
+
     Map<String, List<Double>> trajectories;
 
     public View3D(List<MotionEquationData> equations) {
-        this.equations = equations;
+        this(Solver.solveVerlet(equations, 0.,
+                GlobalSettings.getInstance().viewSettings.getCountSteps(),
+                GlobalSettings.getInstance().viewSettings.getStepSize()));
     }
 
     public View3D(Map<String, List<Double>> trajectories) {
         this.trajectories = trajectories;
+        fileChooser.setInitialDirectory(new File("."));
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Текстовые файлы (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
     }
 
     private void buildCamera() {
@@ -79,6 +98,61 @@ public class View3D extends Application {
         camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
         cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
         cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+    }
+
+    private ImageView getImageView(String name) {
+        Image image = new Image(getClass().getResourceAsStream(String.format("/icons/%s.png", name)));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(16);
+        imageView.setFitWidth(16);
+        return imageView;
+    }
+
+    private void buildButtons() {
+        final int[] i = {-440};
+        BiConsumer<Button, Consumer<RunAnimate>> rewindHandler = (button, action) -> {
+            button.setOnMousePressed(e -> {
+                isButtonPressed = true;
+                new Thread(() -> {
+                    while (isButtonPressed) {
+                        runLater(() -> action.accept(animation));
+                        try {
+                            Thread.sleep(GlobalSettings.getInstance().viewSettings.getAnimateStepSize());
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }).start();
+            });
+
+            button.setOnMouseReleased(e -> isButtonPressed = false);
+        };
+
+        new LinkedHashMap<String, Consumer<Button>>() {{
+            put("save", button -> button.setOnAction(e -> {
+                File file = fileChooser.showSaveDialog(root.getScene().getWindow());
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write(gson.toJson(trajectories));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }));
+            put("play", button -> button.setOnAction(e -> animation.play()));
+            put("pause", button -> button.setOnAction(e -> animation.pause()));
+            put("reset", button -> button.setOnAction(e -> animation.reset()));
+            put("prev", button -> button.setOnAction(e -> animation.prev()));
+            put("next", button -> button.setOnAction(e -> animation.next()));
+            put("prevRewind", button -> rewindHandler.accept(button, RunAnimate::prev));
+            put("nextRewind", button -> rewindHandler.accept(button, RunAnimate::next));
+        }}.forEach((name, handler) -> {
+            Button button = new Button();
+            button.setGraphic(getImageView(name));
+            button.setTranslateZ(-CAMERA_INITIAL_DISTANCE);
+            handler.accept(button);
+            button.setLayoutX(i[0] += 40);
+            button.setLayoutY(-230);
+            cameraXform3.getChildren().add(button);
+        });
     }
 
     private void buildAxes() {
@@ -108,35 +182,28 @@ public class View3D extends Application {
     }
 
     private void buildMolecule() {
-        GlobalSettings.ViewSettings settings = GlobalSettings.getInstance().viewSettings;
-
-        Map<String, List<Double>> result = trajectories != null
-                ? trajectories
-                : Solver.solveVerlet(equations, 0., settings.getCountSteps(), settings.getStepSize());
-
-        List<List<Point3D>> trajectories = new ArrayList<>();
+        List<List<Point3D>> allPoints = new ArrayList<>();
         List<Point3D> points;
         Set<String> labels;
-        if (equations != null) {
-            labels = equations.stream()
-                    .map(MotionEquationData::getLabel)
-                    .collect(Collectors.toSet());
-        } else {
-            labels = this.trajectories.keySet().stream()
+        labels = trajectories.keySet().stream()
                     .map(key -> key.replaceAll("[xyz]", ""))
                     .collect(Collectors.toSet());
-        }
         for (String label : labels) {
             points = new ArrayList<>();
-            for (int i = 0; i < result.get("x" + label).size(); i++) {
-                points.add(new Point3D(result.get("x" + label).get(i),
-                        result.get("z" + label).get(i),
-                        -result.get("y" + label).get(i)));
+            for (int i = 0; i < trajectories.get("x" + label).size(); i++) {
+                points.add(new Point3D(trajectories.get("x" + label).get(i),
+                        trajectories.get("z" + label).get(i),
+                        -trajectories.get("y" + label).get(i)));
             }
-            trajectories.add(points);
+            allPoints.add(points);
         }
 
-        new Thread(new RunAnimate(trajectories, moleculeGroup, settings.getAnimateStepSize(), scale)).start();
+        animation = new RunAnimate(allPoints,
+                moleculeGroup,
+                GlobalSettings.getInstance().viewSettings.getAnimateStepSize(),
+                scale);
+        animationThread = new Thread(animation);
+        animationThread.start();
         world.getChildren().addAll(moleculeGroup);
     }
 
@@ -170,12 +237,12 @@ public class View3D extends Application {
                 cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
                         mouseDeltaY * modifierFactor * modifier * ROTATION_SPEED);  // -
             } else if (me.isSecondaryButtonDown()) {
-                double z = camera.getTranslateZ();
+                double z = cameraXform2.getTranslateZ();
                 double delta = Math.max(Math.abs(mouseDeltaX), Math.abs(mouseDeltaY));
                 if (delta == Math.abs(mouseDeltaX) && mouseDeltaX < 0) modifier *= -1;
                 if (delta == Math.abs(mouseDeltaY) && mouseDeltaY < 0) modifier *= -1;
                 double newZ = z + delta * MOUSE_SPEED * modifier * 10;
-                camera.setTranslateZ(newZ);
+                cameraXform2.setTranslateZ(newZ);
             } else if (me.isMiddleButtonDown()) {
                 cameraXform2.t.setX(cameraXform2.t.getX() +
                         mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);  // -
@@ -191,11 +258,11 @@ public class View3D extends Application {
             switch (event.getCode()) {
                 case PLUS:
                 case EQUALS:
-                    camera.setTranslateZ(camera.getTranslateZ() + 10);
+                    camera.setTranslateZ(cameraXform2.getTranslateZ() + 10);
                     break;
                 case MINUS:
                 case UNDERSCORE:
-                    camera.setTranslateZ(camera.getTranslateZ() - 10);
+                    camera.setTranslateZ(cameraXform2.getTranslateZ() - 10);
                     break;
                 case Z:
                     cameraXform2.t.setX(0.0);
@@ -216,6 +283,7 @@ public class View3D extends Application {
     @Override
     public void start(Stage primaryStage) {
         buildCamera();
+        buildButtons();
         buildAxes();
         buildMolecule();
 
@@ -229,6 +297,14 @@ public class View3D extends Application {
 
         scene.setCamera(camera);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(event -> {
+            animation.stop();
+            try {
+                animationThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static void main(String[] args) {

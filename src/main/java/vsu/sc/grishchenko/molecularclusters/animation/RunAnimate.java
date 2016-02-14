@@ -8,9 +8,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import vsu.sc.grishchenko.molecularclusters.view.Xform;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static javafx.application.Platform.runLater;
 
@@ -20,6 +18,12 @@ public class RunAnimate implements Runnable {
     private int timeStep;
     private Long numberSteps;
     private double scale;
+    private int timePointer = 0;
+    private int oldTimePointer = 0;
+    private boolean isPaused = false;
+    private boolean isStopped = false;
+    private boolean isUpdated = false;
+    private Stack<List<Sphere>> frames = new Stack<>();
 
     public RunAnimate(List<List<Point3D>> trajectories, Xform root, int timeStep, double scale) {
         this.timeStep = timeStep;
@@ -40,37 +44,68 @@ public class RunAnimate implements Runnable {
 
     @Override
     public void run() {
-        Double[] oldCoordinates = new Double[3];
-        for (int i = 0; i < numberSteps; i++) {
-            try {
-                Thread.sleep(timeStep);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+        while (!isStopped) {
+            if (!isUpdated) {
+                try {
+                    Thread.sleep(timeStep);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                isUpdated = false;
             }
-            final int stepNumber = i;
-            runLater(() -> {
-                for (Map.Entry<Sphere, List<Point3D>> shape : atoms.entrySet()) {
-                    if (stepNumber >= shape.getValue().size()) continue;
+            if (!isPaused && timePointer < numberSteps) {
+                timePointer++;
+            }
+            if (timePointer != oldTimePointer) actualize();
+        }
+    }
 
-                    Sphere atom = shape.getKey();
-                    oldCoordinates[0] = atom.getTranslateX();
-                    oldCoordinates[1] = atom.getTranslateY();
-                    oldCoordinates[2] = atom.getTranslateZ();
+    private void actualize() {
+        if (timePointer >= numberSteps) {
+            isPaused = true;
+            timePointer = numberSteps.intValue();
+            return;
+        }
 
-                    atom.setTranslateX(shape.getValue().get(stepNumber).getX() * scale);
-                    atom.setTranslateY(shape.getValue().get(stepNumber).getY() * scale);
-                    atom.setTranslateZ(shape.getValue().get(stepNumber).getZ() * scale);
+        List<Sphere> frame = new ArrayList<>();
+        Double[] oldCoordinates = new Double[3];
 
-                    if (oldCoordinates[0] != atom.getTranslateX()
-                            || oldCoordinates[1] != atom.getTranslateY()
-                            || oldCoordinates[2] != atom.getTranslateZ()) {
+        final int stepNumber = timePointer;
+        final int oldStepNumber = oldTimePointer;
 
-                        nodes.add(createAtom(oldCoordinates[0], oldCoordinates[1], oldCoordinates[2],
-                                0.3 * scale, Color.GREY, Color.DARKGRAY));
+        runLater(() -> {
+            for (Map.Entry<Sphere, List<Point3D>> shape : atoms.entrySet()) {
+                if (stepNumber >= shape.getValue().size()) continue;
+
+                Sphere atom = shape.getKey();
+                oldCoordinates[0] = atom.getTranslateX();
+                oldCoordinates[1] = atom.getTranslateY();
+                oldCoordinates[2] = atom.getTranslateZ();
+
+                atom.setTranslateX(shape.getValue().get(stepNumber).getX() * scale);
+                atom.setTranslateY(shape.getValue().get(stepNumber).getY() * scale);
+                atom.setTranslateZ(shape.getValue().get(stepNumber).getZ() * scale);
+
+                if (oldCoordinates[0] != atom.getTranslateX()
+                        || oldCoordinates[1] != atom.getTranslateY()
+                        || oldCoordinates[2] != atom.getTranslateZ()) {
+
+                    if (stepNumber > oldStepNumber) {
+                        Sphere tail = createAtom(oldCoordinates[0], oldCoordinates[1], oldCoordinates[2],
+                                0.3 * scale, Color.GREY, Color.DARKGRAY);
+                        nodes.add(tail);
+                        frame.add(tail);
                     }
                 }
-            });
-        }
+            }
+            if (!frame.isEmpty()) frames.push(frame);
+            if (stepNumber < oldStepNumber && !frames.isEmpty()) {
+                frames.pop().forEach(nodes::remove);
+            }
+        });
+
+        oldTimePointer = timePointer;
     }
 
     private Sphere createAtom(double X, double Y, double Z, double diameter, Color specular, Color diffuse) {
@@ -85,5 +120,33 @@ public class RunAnimate implements Runnable {
         atom.setTranslateZ(Z);
 
         return atom;
+    }
+
+    public void play() {
+        isPaused = false;
+    }
+
+    public void pause() {
+        isPaused = true;
+    }
+
+    public void next() {
+        timePointer++;
+        isUpdated = true;
+    }
+
+    public void prev() {
+        timePointer--;
+        isUpdated = true;
+    }
+
+    public void reset() {
+        timePointer = 0;
+        frames.stream().flatMap(Collection::stream).forEach(nodes::remove);
+        frames.clear();
+    }
+
+    public void stop() {
+        isStopped = true;
     }
 }

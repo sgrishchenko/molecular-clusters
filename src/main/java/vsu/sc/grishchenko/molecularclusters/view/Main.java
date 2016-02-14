@@ -11,7 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(ResourceFactory.getResource(Main.class, "form.fxml"));
+        Parent root = FXMLLoader.load(ResourceFactory.getResource(this, "form.fxml"));
         primaryStage.setTitle("Молекулярные кластеры");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

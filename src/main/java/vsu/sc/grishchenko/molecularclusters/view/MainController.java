@@ -39,6 +39,13 @@ public class MainController {
     public DirectoryChooser directoryChooser = new DirectoryChooser();
     public Gson gson = new Gson();
 
+
+    public MainController() {
+        fileChooser.setInitialDirectory(new File("."));
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Текстовые файлы (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+    }
+
     private void add(MotionEquationData data) {
         HBox line = new HBox();
         line.setPadding(new Insets(5));
@@ -129,7 +136,6 @@ public class MainController {
     }
 
     public void open(ActionEvent actionEvent) {
-        fileChooser.setInitialDirectory(new File("."));
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             container.getChildren().clear();
@@ -142,7 +148,6 @@ public class MainController {
     }
 
     public void save(ActionEvent actionEvent) {
-        fileChooser.setInitialDirectory(new File("."));
         File file = fileChooser.showSaveDialog(container.getScene().getWindow());
         if (file != null) {
             try (FileWriter fileWriter = new FileWriter(file)) {
@@ -179,7 +184,6 @@ public class MainController {
     }
 
     public void exp2(ActionEvent actionEvent) {
-        fileChooser.setInitialDirectory(new File("."));
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             String filePath = Analyzer.createExperimentDirectory("experiment2/");
@@ -221,7 +225,6 @@ public class MainController {
     }
 
     public void startFromFile(ActionEvent actionEvent) {
-        fileChooser.setInitialDirectory(new File("."));
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             Map<String, List<Double>> result = new HashMap<>();
@@ -236,7 +239,6 @@ public class MainController {
     }
 
     public void analyzeFromFile(ActionEvent actionEvent) {
-        fileChooser.setInitialDirectory(new File("."));
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             Map<String, List<Double>> result = new HashMap<>();
