@@ -14,7 +14,7 @@
             <Menu mnemonicParsing="false" text="Open Recent" visible="false" />
             <MenuItem mnemonicParsing="false" text="Close" visible="false" />
             <MenuItem mnemonicParsing="false" onAction="#save" text="Сохранить" />
-            <MenuItem mnemonicParsing="false" text="Save As…" visible="false" />
+            <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Сохранить как..." />
             <MenuItem mnemonicParsing="false" text="Revert" visible="false" />
             <MenuItem mnemonicParsing="false" onAction="#settings" text="Настройки…" />
             <MenuItem mnemonicParsing="false" text="Quit" visible="false" />

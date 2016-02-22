@@ -131,11 +131,13 @@ public class View3D extends Application {
         new LinkedHashMap<String, Consumer<Button>>() {{
             put("save", button -> button.setOnAction(e -> {
                 File file = fileChooser.showSaveDialog(root.getScene().getWindow());
+                if (file == null) return;
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.write(gson.toJson(trajectories));
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+                MainController.updateTitle(root.getScene(), file);
             }));
             put("play", button -> button.setOnAction(e -> animation.play()));
             put("pause", button -> button.setOnAction(e -> animation.pause()));
