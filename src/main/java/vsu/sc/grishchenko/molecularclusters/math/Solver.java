@@ -116,8 +116,8 @@ public final class Solver {
     }
 
     private static MotionEquation getMotionEquation(MotionEquationData data,
-                                             int projection,
-                                             List<MotionEquationData> dataList) {
+                                                    int projection,
+                                                    List<MotionEquationData> dataList) {
         String projectionLabel;
         switch (projection) {
             case 0 : projectionLabel = "x"; break;
@@ -128,7 +128,8 @@ public final class Solver {
         MotionEquation result = new MotionEquation(projectionLabel + data.getLabel(),
                 data.getAccelerationEquation(),
                 data.getInitialPosition()[projection],
-                data.getInitialVelocity()[projection]);
+                data.getInitialVelocity()[projection],
+                data.getColor());
         dataList.stream()
                 .map(MotionEquationData::getLabel)
                 .forEach(label -> result.setAccelerationEquation(
@@ -138,14 +139,14 @@ public final class Solver {
         return result;
     }
 
-    public static Map<String, List<Double>> solveVerlet(List<MotionEquationData> dataList,
+    public static List<Trajectory> solveVerlet(List<MotionEquationData> dataList,
                                                         double initialTime,
                                                         int countSteps,
                                                         double stepSize) {
 
         ExpressionBuilder builder;
         double initialAcceleration;
-        Map<String, List<Double>> result = new HashMap<>(dataList.size() * 3);
+        Map<String, Trajectory> result = new HashMap<>(dataList.size() * 3);
         List<MotionEquation> equations = new ArrayList<>(dataList.size() * 3);
         List<Double> trajectory;
         StringBuilder compiledEquation;
@@ -181,7 +182,7 @@ public final class Solver {
 
             builder = new ExpressionBuilder(equation.getAccelerationEquation());
             builder.variable("t");
-            builder.variables((Set<String>) equations.stream().map(e -> e.getLabel()).collect(Collectors.toCollection(HashSet::new)));
+            builder.variables(equations.stream().map(e -> e.getLabel()).collect(Collectors.toCollection(HashSet::new)));
             equation.setAccelerationExpression(builder.build());
 
             initialAcceleration = equation
@@ -197,7 +198,7 @@ public final class Solver {
             trajectory = new ArrayList<>(countSteps);
             trajectory.add(equation.getBeforeLastPosition());
             trajectory.add(equation.getPastPosition());
-            result.put(equation.getLabel(), trajectory);
+            result.put(equation.getLabel(), new Trajectory(equation.getLabel(), equation.getColor(), trajectory));
         }
 
         //iteration
@@ -217,13 +218,13 @@ public final class Solver {
                         - equation.getBeforeLastPosition()
                         + equation.getAcceleration() * Math.pow(stepSize, 2);
 
-                trajectory = result.get(equation.getLabel());
+                trajectory = result.get(equation.getLabel()).getPath();
                 trajectory.add(newPosition);
                 equation.setBeforeLastPosition(equation.getPastPosition());
                 equation.setPastPosition(newPosition);
             }
         }
 
-        return result;
+        return new ArrayList<>(result.values());
     }
 }

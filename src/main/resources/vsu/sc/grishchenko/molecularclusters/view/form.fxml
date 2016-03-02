@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <VBox prefHeight="400.0" prefWidth="753.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vsu.sc.grishchenko.molecularclusters.view.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
@@ -72,7 +75,7 @@
                      <children>
                         <ScrollPane layoutY="-1.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                            <content>
-                              <VBox fx:id="container" prefHeight="163.0" prefWidth="594.0">
+                              <VBox fx:id="container" prefHeight="163.0" prefWidth="600.0">
                                  <children>
                                     <HBox prefHeight="35.0" prefWidth="603.0">
                                        <children>
@@ -93,6 +96,7 @@
                                           <Label prefHeight="25.0" prefWidth="0.0" text=", " />
                                           <TextField layoutX="478.0" layoutY="15.0" prefWidth="40.0" text="0.0" />
                                           <Label prefHeight="25.0" prefWidth="0.0" text=")" />
+                                          <ColorPicker prefHeight="25.0" prefWidth="45.0" />
                                        </children>
                                        <opaqueInsets>
                                           <Insets />
@@ -111,5 +115,6 @@
             </SplitPane>
          </children>
     </AnchorPane>
+      <Label fx:id="status" />
   </children>
 </VBox>

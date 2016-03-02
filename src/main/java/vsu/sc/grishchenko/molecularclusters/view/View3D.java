@@ -2,7 +2,6 @@ package vsu.sc.grishchenko.molecularclusters.view;
 
 import com.google.gson.Gson;
 import javafx.application.Application;
-import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
@@ -17,16 +16,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
 import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
-import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
-import vsu.sc.grishchenko.molecularclusters.math.Solver;
+import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
+import vsu.sc.grishchenko.molecularclusters.math.Trajectory3D;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static javafx.application.Platform.runLater;
 
@@ -70,15 +69,9 @@ public class View3D extends Application {
 
     boolean isButtonPressed;
 
-    Map<String, List<Double>> trajectories;
+    List<Trajectory> trajectories;
 
-    public View3D(List<MotionEquationData> equations) {
-        this(Solver.solveVerlet(equations, 0.,
-                GlobalSettings.getInstance().viewSettings.getCountSteps(),
-                GlobalSettings.getInstance().viewSettings.getStepSize()));
-    }
-
-    public View3D(Map<String, List<Double>> trajectories) {
+    public View3D(List<Trajectory> trajectories) {
         this.trajectories = trajectories;
         fileChooser.setInitialDirectory(new File("."));
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Текстовые файлы (*.txt)", "*.txt");
@@ -182,23 +175,7 @@ public class View3D extends Application {
     }
 
     private void buildMolecule() {
-        List<List<Point3D>> allPoints = new ArrayList<>();
-        List<Point3D> points;
-        Set<String> labels;
-        labels = trajectories.keySet().stream()
-                    .map(key -> key.replaceAll("[xyz]", ""))
-                    .collect(Collectors.toSet());
-        for (String label : labels) {
-            points = new ArrayList<>();
-            for (int i = 0; i < trajectories.get("x" + label).size(); i++) {
-                points.add(new Point3D(trajectories.get("x" + label).get(i),
-                        trajectories.get("z" + label).get(i),
-                        -trajectories.get("y" + label).get(i)));
-            }
-            allPoints.add(points);
-        }
-
-        animation = new RunAnimate(allPoints,
+        animation = new RunAnimate(Trajectory3D.from(trajectories),
                 moleculeGroup,
                 GlobalSettings.getInstance().viewSettings.getAnimateStepSize(),
                 scale);

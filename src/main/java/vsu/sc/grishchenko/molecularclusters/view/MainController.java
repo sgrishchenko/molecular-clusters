@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -22,22 +23,29 @@ import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
 import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
 import vsu.sc.grishchenko.molecularclusters.experiment.ImportantData;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
+import vsu.sc.grishchenko.molecularclusters.math.Solver;
+import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+
+import static javafx.application.Platform.runLater;
 
 public class MainController {
     public VBox container;
     public FileChooser fileChooser = new FileChooser();
     public DirectoryChooser directoryChooser = new DirectoryChooser();
     public Gson gson = new Gson();
+    public Label status;
 
 
     public MainController() {
@@ -85,6 +93,9 @@ public class MainController {
             str.setPrefHeight(25);
             line.getChildren().add(str);
         }
+        ColorPicker colorPicker = new ColorPicker(ColorAdapter.from(data.getColor()));
+        colorPicker.setPrefWidth(45);
+        line.getChildren().add(colorPicker);
 
         container.getChildren().add(line);
     }
@@ -105,7 +116,9 @@ public class MainController {
     }
 
     public void start(ActionEvent actionEvent) {
-        View3D view3D = new View3D(read());
+        View3D view3D = new View3D(Solver.solveVerlet(read(), 0.,
+                GlobalSettings.getInstance().viewSettings.getCountSteps(),
+                GlobalSettings.getInstance().viewSettings.getStepSize()));
         view3D.start(new Stage());
     }
 
@@ -122,15 +135,16 @@ public class MainController {
         List<MotionEquationData> equations = new ArrayList<>();
 
         container.getChildren().forEach(line -> equations.add(new MotionEquationData(
-                        ((TextField) ((HBox) line).getChildren().get(1)).getText(),
-                        ((TextField) ((HBox) line).getChildren().get(3)).getText(),
-                        ArrayUtils.<Double>toArray(getDoubleValueFromTextField(line, 5),
-                                getDoubleValueFromTextField(line, 7),
-                                getDoubleValueFromTextField(line, 9)),
-                        ArrayUtils.<Double>toArray(getDoubleValueFromTextField(line, 11),
-                                getDoubleValueFromTextField(line, 13),
-                                getDoubleValueFromTextField(line, 15)))
-        ));
+                ((TextField) ((HBox) line).getChildren().get(1)).getText(),
+                ((TextField) ((HBox) line).getChildren().get(3)).getText(),
+                ArrayUtils.<Double>toArray(getDoubleValueFromTextField(line, 5),
+                        getDoubleValueFromTextField(line, 7),
+                        getDoubleValueFromTextField(line, 9)),
+                ArrayUtils.<Double>toArray(getDoubleValueFromTextField(line, 11),
+                        getDoubleValueFromTextField(line, 13),
+                        getDoubleValueFromTextField(line, 15)),
+                ColorAdapter.from(((ColorPicker) ((HBox) line).getChildren().get(17)).getValue())
+        )));
 
         return equations;
     }
@@ -188,9 +202,8 @@ public class MainController {
         if (file != null) {
             String filePath = Analyzer.createExperimentDirectory("experiment2/");
             DateTime start = new DateTime();
-            Map<String, List<Double>> result = new HashMap<>();
             try (FileReader fileReader = new FileReader(file)) {
-                result = gson.fromJson(fileReader, result.getClass());
+                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));;
 
                 saveExperiments(filePath, Analyzer.experiment2(filePath, read(), result));
             } catch (IOException ex) {
@@ -227,9 +240,8 @@ public class MainController {
     public void startFromFile(ActionEvent actionEvent) {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
-            Map<String, List<Double>> result = new HashMap<>();
             try (FileReader fileReader = new FileReader(file)) {
-                result = gson.fromJson(fileReader, result.getClass());
+                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
                 View3D view3D = new View3D(result);
                 view3D.start(new Stage());
             } catch (IOException ex) {
@@ -241,9 +253,8 @@ public class MainController {
     public void analyzeFromFile(ActionEvent actionEvent) {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
-            Map<String, List<Double>> result = new HashMap<>();
             try (FileReader fileReader = new FileReader(file)) {
-                result = gson.fromJson(fileReader, result.getClass());
+                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
                 AnalyzeResult analyzeResult = Analyzer.getParams(result);
 
                 new InfoDialog(String.format("Расстояние до оси трубки в начальный момент: %.3f Å\n" +
@@ -279,14 +290,14 @@ public class MainController {
         directoryChooser.setInitialDirectory(new File("."));
         File file = directoryChooser.showDialog(container.getScene().getWindow());
         String fileNamePattern = "%s/exp_%d_%d.txt";
-        Map<String, List<Double>> result = new HashMap<>();
+        List<Trajectory> result;
         List<List<AnalyzeResult>> experiments = new ArrayList<>();
         if (file != null) {
             for (int i = 0; i < 10; i++) {
                 List<AnalyzeResult> row = new ArrayList<>();
                 for (int j = 0; j < 10; j++) {
                     try (FileReader fileReader = new FileReader(String.format(fileNamePattern, file.getPath(), i, j))) {
-                        result = gson.fromJson(fileReader, result.getClass());
+                        result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
                         row.add(Analyzer.getParams(result));
                     } catch(IOException ex) {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -308,5 +319,20 @@ public class MainController {
             }
         }
         new Settings().start(new Stage());
+    }
+
+    private void setWorkStatus(Runnable work) {
+        status.setText("Выполняются вычисления...");
+        new Thread(() -> {
+            runLater(() -> {
+                try {
+                    work.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    status.setText("В процессе вычислений произошла ошибка.");
+                }
+                status.setText("");
+            });
+        }).start();
     }
 }

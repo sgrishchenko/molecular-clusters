@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
+import vsu.sc.grishchenko.molecularclusters.math.Trajectory3D;
+import vsu.sc.grishchenko.molecularclusters.view.ColorAdapter;
 import vsu.sc.grishchenko.molecularclusters.view.Xform;
 
 import java.util.*;
@@ -25,21 +27,21 @@ public class RunAnimate implements Runnable {
     private boolean isUpdated = false;
     private Stack<List<Sphere>> frames = new Stack<>();
 
-    public RunAnimate(List<List<Point3D>> trajectories, Xform root, int timeStep, double scale) {
+    public RunAnimate(List<Trajectory3D> trajectories, Xform root, int timeStep, double scale) {
         this.timeStep = timeStep;
         this.scale = scale;
         nodes = root.getChildren();
         atoms = new HashMap<>(trajectories.size());
 
         Point3D point;
-        for (List<Point3D> t : trajectories) {
-            point = t.get(0);
+        for (Trajectory3D t : trajectories) {
+            point = t.getPath().get(0);
             Sphere atom = createAtom(point.getX() * scale, point.getY() * scale, point.getZ() * scale,
-                    0.5 * scale, Color.RED, Color.DARKRED);
+                    0.5 * scale, ColorAdapter.from(t.getColor()), ColorAdapter.from(t.getColor()).darker());
             nodes.add(atom);
-            atoms.put(atom, t);
+            atoms.put(atom, t.getPath());
         }
-        numberSteps = trajectories.stream().mapToLong(t -> (long) t.size()).max().getAsLong();
+        numberSteps = trajectories.stream().mapToLong(t -> (long) t.getPath().size()).max().getAsLong();
     }
 
     @Override
@@ -109,12 +111,12 @@ public class RunAnimate implements Runnable {
     }
 
     private Sphere createAtom(double X, double Y, double Z, double diameter, Color specular, Color diffuse) {
-        final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(diffuse);
-        redMaterial.setSpecularColor(specular);
+        final PhongMaterial material = new PhongMaterial();
+        material.setDiffuseColor(diffuse);
+        material.setSpecularColor(specular);
 
         Sphere atom = new Sphere(diameter);
-        atom.setMaterial(redMaterial);
+        atom.setMaterial(material);
         atom.setTranslateX(X);
         atom.setTranslateY(Y);
         atom.setTranslateZ(Z);

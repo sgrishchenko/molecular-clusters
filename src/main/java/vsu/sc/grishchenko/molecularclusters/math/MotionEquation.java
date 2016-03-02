@@ -13,15 +13,18 @@ public class MotionEquation {
     private String accelerationEquation;
     private Expression accelerationExpression;
     private double acceleration;
+    private Color color = new Color(0.6, 0, 0, 1);
 
     public MotionEquation(String label,
                           String accelerationEquation,
                           double initialPosition,
-                          double initialVelocity) {
+                          double initialVelocity,
+                          Color color) {
         this.label = label;
         this.beforeLastPosition = initialPosition;
         this.initialVelocity = initialVelocity;
         this.accelerationEquation = accelerationEquation;
+        this.color = color;
     }
 
     public double getAcceleration() {
@@ -78,5 +81,13 @@ public class MotionEquation {
 
     public void setAccelerationEquation(String accelerationEquation) {
         this.accelerationEquation = accelerationEquation;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }

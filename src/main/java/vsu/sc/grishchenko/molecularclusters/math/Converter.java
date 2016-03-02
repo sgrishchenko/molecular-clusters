@@ -23,7 +23,7 @@ public class Converter {
                         ArrayUtils.<Double>toArray(Double.parseDouble(buffer[1]),
                                 Double.parseDouble(buffer[2]),
                                 Double.parseDouble(buffer[3])),
-                        ArrayUtils.<Double>toArray(0., 0., 0.)));
+                        ArrayUtils.<Double>toArray(0., 0., 0.), new Color(0.6, 0, 0, 1)));
             });
         }
 

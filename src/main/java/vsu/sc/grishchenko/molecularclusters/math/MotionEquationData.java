@@ -5,6 +5,7 @@ public class MotionEquationData {
     private String accelerationEquation;
     private Double[] initialPosition = {0., 0., 0.};
     private Double[] initialVelocity = {0., 0., 0.};
+    private Color color = new Color(0.6, 0, 0, 1);
 
     public MotionEquationData(String label) {
         this.label = label;
@@ -14,11 +15,13 @@ public class MotionEquationData {
     public MotionEquationData(String label,
                               String accelerationEquation,
                               Double[] initialPosition,
-                              Double[] initialVelocity) {
+                              Double[] initialVelocity,
+                              Color color) {
         this.label = label;
         this.accelerationEquation = accelerationEquation;
         this.initialPosition = initialPosition;
         this.initialVelocity = initialVelocity;
+        this.color = color;
     }
 
     public String getLabel() {
@@ -51,5 +54,13 @@ public class MotionEquationData {
 
     public void setInitialVelocity(Double[] initialVelocity) {
         this.initialVelocity = initialVelocity;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }
