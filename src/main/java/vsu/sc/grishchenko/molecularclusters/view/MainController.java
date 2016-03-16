@@ -1,9 +1,9 @@
 package vsu.sc.grishchenko.molecularclusters.view;
 
 import com.google.gson.Gson;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.stream.Stream;
 
 import static javafx.application.Platform.runLater;
@@ -47,6 +48,7 @@ public class MainController {
     public Gson gson = new Gson();
     public Label status;
 
+    private File currentFile;
 
     public MainController() {
         fileChooser.setInitialDirectory(new File("."));
@@ -100,13 +102,13 @@ public class MainController {
         container.getChildren().add(line);
     }
 
-    public void add(ActionEvent actionEvent) {
+    public void add() {
         int number = container.getChildren().size() + 1;
         add(new MotionEquationData("r" + number));
     }
 
-    public void delete(ActionEvent actionEvent) {
-        List<Node> linesToDelete = new ArrayList<Node>();
+    public void delete() {
+        List<Node> linesToDelete = new ArrayList<>();
         CheckBox check;
         for (Node line : container.getChildren()) {
             check = (CheckBox)((HBox) line).getChildren().get(0);
@@ -115,16 +117,16 @@ public class MainController {
         container.getChildren().removeAll(linesToDelete);
     }
 
-    public void start(ActionEvent actionEvent) {
+    public void start() {
         View3D view3D = new View3D(Solver.solveVerlet(read(), 0.,
                 GlobalSettings.getInstance().viewSettings.getCountSteps(),
                 GlobalSettings.getInstance().viewSettings.getStepSize()));
         view3D.start(new Stage());
     }
 
-    public void clear(ActionEvent actionEvent) {
+    public void clear() {
         container.getChildren().clear();
-        add(actionEvent);
+        add();
     }
 
     private Double getDoubleValueFromTextField(Node line, int index) {
@@ -149,7 +151,7 @@ public class MainController {
         return equations;
     }
 
-    public void open(ActionEvent actionEvent) {
+    public void open() {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             container.getChildren().clear();
@@ -158,18 +160,45 @@ public class MainController {
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
+            currentFile = file;
+            updateTitle(container.getScene(), currentFile);
         }
     }
 
-    public void save(ActionEvent actionEvent) {
+    public void save() {
+        if (currentFile == null) {
+            saveAs();
+        } else {
+            save(currentFile);
+        }
+    }
+
+    public void saveAs() {
         File file = fileChooser.showSaveDialog(container.getScene().getWindow());
         if (file != null) {
-            try (FileWriter fileWriter = new FileWriter(file)) {
-                fileWriter.write(gson.toJson(read()));
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            save(file);
+            currentFile = file;
+            updateTitle(container.getScene(), currentFile);
         }
+    }
+
+    private void save(File file) {
+        try (FileWriter fileWriter = new FileWriter(file)) {
+            fileWriter.write(gson.toJson(read()));
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void updateTitle(Scene scene, File file) {
+        Stage stage = (Stage) scene.getWindow();
+        if (!stage.getTitle().endsWith("]")) {
+            stage.setTitle(stage.getTitle() + " - [] - []");
+        }
+        stage.setTitle(stage.getTitle().replaceAll(
+                "( - \\[).*(\\] - \\[).*(\\])$",
+                "$1" + Matcher.quoteReplacement(file.getName()) + "$2" + Matcher.quoteReplacement(file.getPath()) + "$3"
+        ));
     }
 
     private void showPeriodInfoDialog(DateTime start) {
@@ -188,7 +217,7 @@ public class MainController {
                 .start(new Stage());
     }
 
-    public void exp1(ActionEvent actionEvent) {
+    public void exp1() {
         String filePath = Analyzer.createExperimentDirectory("experiment1/");
         DateTime start = new DateTime();
 
@@ -197,7 +226,7 @@ public class MainController {
         showPeriodInfoDialog(start);
     }
 
-    public void exp2(ActionEvent actionEvent) {
+    public void exp2() {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             String filePath = Analyzer.createExperimentDirectory("experiment2/");
@@ -237,7 +266,7 @@ public class MainController {
                 });
     }
 
-    public void startFromFile(ActionEvent actionEvent) {
+    public void startFromFile() {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             try (FileReader fileReader = new FileReader(file)) {
@@ -247,10 +276,14 @@ public class MainController {
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
+            Stage stage = new Stage();
+            View3D view3D = new View3D(result);
+            view3D.start(stage);
+            updateTitle(stage.getScene(), file);
         }
     }
 
-    public void analyzeFromFile(ActionEvent actionEvent) {
+    public void analyzeFromFile() {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             try (FileReader fileReader = new FileReader(file)) {
@@ -286,7 +319,7 @@ public class MainController {
         }
     }
 
-    public void analyzeFromFolder(ActionEvent actionEvent) {
+    public void analyzeFromFolder() {
         directoryChooser.setInitialDirectory(new File("."));
         File file = directoryChooser.showDialog(container.getScene().getWindow());
         String fileNamePattern = "%s/exp_%d_%d.txt";
@@ -310,7 +343,7 @@ public class MainController {
         }
     }
 
-    public void settings(ActionEvent actionEvent) throws Exception {
+    public void settings() throws Exception {
         GlobalSettings.ExperimentSettings experimentSettings = GlobalSettings.getInstance().experimentSettings;
         if (experimentSettings.getMovingPointLabel() == null) {
             List<MotionEquationData> dataList = read();
