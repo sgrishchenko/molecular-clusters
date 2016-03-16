@@ -118,10 +118,12 @@ public class MainController {
     }
 
     public void start() {
-        View3D view3D = new View3D(Solver.solveVerlet(read(), 0.,
-                GlobalSettings.getInstance().viewSettings.getCountSteps(),
-                GlobalSettings.getInstance().viewSettings.getStepSize()));
-        view3D.start(new Stage());
+        setWorkStatus(() -> {
+            View3D view3D = new View3D(Solver.solveVerlet(read(), 0.,
+                    GlobalSettings.getInstance().viewSettings.getCountSteps(),
+                    GlobalSettings.getInstance().viewSettings.getStepSize()));
+            view3D.start(new Stage());
+        });
     }
 
     public void clear() {
@@ -232,7 +234,7 @@ public class MainController {
             String filePath = Analyzer.createExperimentDirectory("experiment2/");
             DateTime start = new DateTime();
             try (FileReader fileReader = new FileReader(file)) {
-                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));;
+                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
 
                 saveExperiments(filePath, Analyzer.experiment2(filePath, read(), result));
             } catch (IOException ex) {
@@ -355,7 +357,7 @@ public class MainController {
 
     private void setWorkStatus(Runnable work) {
         status.setText("Выполняются вычисления...");
-        new Thread(() -> {
+        Thread workThread = new Thread(() -> {
             runLater(() -> {
                 try {
                     work.run();
@@ -365,6 +367,8 @@ public class MainController {
                 }
                 status.setText("");
             });
-        }).start();
+        });
+        workThread.setDaemon(true);
+        workThread.start();
     }
 }
