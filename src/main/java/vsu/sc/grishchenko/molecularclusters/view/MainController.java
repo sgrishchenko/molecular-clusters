@@ -269,10 +269,9 @@ public class MainController {
     public void startFromFile() {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
+            List<Trajectory> result = new ArrayList<>();
             try (FileReader fileReader = new FileReader(file)) {
-                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
-                View3D view3D = new View3D(result);
-                view3D.start(new Stage());
+                 result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
