@@ -1,6 +1,9 @@
 package vsu.sc.grishchenko.molecularclusters.view;
 
 import com.google.gson.Gson;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -19,9 +22,7 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
-import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
-import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
-import vsu.sc.grishchenko.molecularclusters.experiment.ImportantData;
+import vsu.sc.grishchenko.molecularclusters.experiment.*;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import vsu.sc.grishchenko.molecularclusters.math.Solver;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
@@ -33,13 +34,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static javafx.application.Platform.runLater;
 
 public class MainController {
     public VBox container;
@@ -118,12 +120,24 @@ public class MainController {
     }
 
     public void start() {
-        setWorkStatus(() -> {
-            View3D view3D = new View3D(Solver.solveVerlet(read(), 0.,
-                    GlobalSettings.getInstance().viewSettings.getCountSteps(),
-                    GlobalSettings.getInstance().viewSettings.getStepSize()));
-            view3D.start(new Stage());
-        });
+        startTask(new Task<List<Trajectory>>() {
+                      @Override
+                      protected List<Trajectory> call() throws Exception {
+                          List<Trajectory> result;
+                          updateMessage("Выполняются вычисления...");
+                          result = Solver.solveVerlet(read(), 0.,
+                                  GlobalSettings.getInstance().viewSettings.getCountSteps(),
+                                  GlobalSettings.getInstance().viewSettings.getStepSize());
+                          updateMessage("Вычисления выполнены");
+
+                          return result;
+                      }
+                  },
+                event -> {
+                    View3D view3D = new View3D((List<Trajectory>) event.getSource().getValue());
+                    view3D.start(new Stage());
+                });
+
     }
 
     public void clear() {
@@ -131,7 +145,7 @@ public class MainController {
         add();
     }
 
-    private Double getDoubleValueFromTextField(Node line, int index) {
+    private double getDoubleValueFromTextField(Node line, int index) {
         return Double.parseDouble(((TextField) ((HBox) line).getChildren().get(index)).getText());
     }
 
@@ -177,11 +191,11 @@ public class MainController {
 
     public void saveAs() {
         File file = fileChooser.showSaveDialog(container.getScene().getWindow());
-        if (file != null) {
-            save(file);
-            currentFile = file;
-            updateTitle(container.getScene(), currentFile);
-        }
+        if (file == null) return;
+
+        save(file);
+        currentFile = file;
+        updateTitle(container.getScene(), currentFile);
     }
 
     private void save(File file) {
@@ -220,28 +234,36 @@ public class MainController {
     }
 
     public void exp1() {
-        String filePath = Analyzer.createExperimentDirectory("experiment1/");
+        String filePath = Analyzer.createExperimentDirectory(Experiment1.class);
         DateTime start = new DateTime();
-
-        saveExperiments(filePath, Analyzer.experiment1(filePath, read()));
-
-        showPeriodInfoDialog(start);
+        GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
+        Function<List<MotionEquationData>, List<Trajectory>> source
+                = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
+        startTask(new Experiment1(filePath, read(), source), event -> {
+            saveExperiments(filePath, (List<List<AnalyzeResult>>) event.getSource().getValue());
+            showPeriodInfoDialog(start);
+        });
     }
 
     public void exp2() {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
-        if (file != null) {
-            String filePath = Analyzer.createExperimentDirectory("experiment2/");
-            DateTime start = new DateTime();
-            try (FileReader fileReader = new FileReader(file)) {
-                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
+        if (file == null) return;
 
-                saveExperiments(filePath, Analyzer.experiment2(filePath, read(), result));
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        String filePath = Analyzer.createExperimentDirectory(Experiment2.class);
+        DateTime start = new DateTime();
+        GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
+        Function<List<MotionEquationData>, List<Trajectory>> source
+                = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
 
-            showPeriodInfoDialog(start);
+        try (FileReader fileReader = new FileReader(file)) {
+            List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
+
+            startTask(new Experiment2(filePath, read(), source, result), event -> {
+                saveExperiments(filePath, (List<List<AnalyzeResult>>) event.getSource().getValue());
+                showPeriodInfoDialog(start);
+            });
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -322,26 +344,41 @@ public class MainController {
 
     public void analyzeFromFolder() {
         directoryChooser.setInitialDirectory(new File("."));
-        File file = directoryChooser.showDialog(container.getScene().getWindow());
-        String fileNamePattern = "%s/exp_%d_%d.txt";
-        List<Trajectory> result;
-        List<List<AnalyzeResult>> experiments = new ArrayList<>();
-        if (file != null) {
-            for (int i = 0; i < 10; i++) {
-                List<AnalyzeResult> row = new ArrayList<>();
-                for (int j = 0; j < 10; j++) {
-                    try (FileReader fileReader = new FileReader(String.format(fileNamePattern, file.getPath(), i, j))) {
-                        result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
-                        row.add(Analyzer.getParams(result));
-                    } catch(IOException ex) {
-                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                experiments.add(row);
+        File directory = directoryChooser.showDialog(container.getScene().getWindow());
+        if (directory == null) return;
+        String fileNamePattern = "%s/exp_%d.txt";
+
+        int[] i = {1};
+        Function<List<MotionEquationData>, List<Trajectory>> source = dataList -> {
+            try (FileReader fileReader = new FileReader(String.format(fileNamePattern, directory.getPath(), i[0]))) {
+                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
+                i[0]++;
+                return result;
+            } catch(IOException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                return Collections.emptyList();
             }
-            saveExperiments(file.getPath() + "/", experiments);
+        };
+
+        //for Experiment2
+        List<Trajectory> solvingSystemResult = source.apply(null);
+        i[0] = 1;
+
+        AbstractExperiment task = Arrays.asList(
+                new Experiment1(null, null, source),
+                new Experiment2(null, null, source, solvingSystemResult)
+        )
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), exp -> Analyzer.experimentDictionary.get(exp.getClass())))
+                .entrySet().stream()
+                .filter(expEntry -> directory.getName().startsWith(expEntry.getValue()))
+                .findAny().get().getKey();
+
+        startTask(task, event -> {
+            saveExperiments(directory.getPath() + "/", (List<List<AnalyzeResult>>) event.getSource().getValue());
             new InfoDialog("Параметры экспериментов\nуспешно пересчитаны").start(new Stage());
-        }
+        });
+
     }
 
     public void settings() throws Exception {
@@ -355,20 +392,12 @@ public class MainController {
         new Settings().start(new Stage());
     }
 
-    private void setWorkStatus(Runnable work) {
-        status.setText("Выполняются вычисления...");
-        Thread workThread = new Thread(() -> {
-            runLater(() -> {
-                try {
-                    work.run();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    status.setText("В процессе вычислений произошла ошибка.");
-                }
-                status.setText("");
-            });
-        });
-        workThread.setDaemon(true);
-        workThread.start();
+    private void startTask(final Task task, EventHandler<WorkerStateEvent> onSucceeded) {
+        status.textProperty().bind(task.messageProperty());
+        task.setOnSucceeded(onSucceeded);
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 }
