@@ -2,10 +2,13 @@ package vsu.sc.grishchenko.molecularclusters.animation;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Point3D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory3D;
 import vsu.sc.grishchenko.molecularclusters.view.ColorAdapter;
 import vsu.sc.grishchenko.molecularclusters.view.Xform;
@@ -15,7 +18,10 @@ import java.util.*;
 import static javafx.application.Platform.runLater;
 
 public class RunAnimate implements Runnable {
-    private Map<Sphere, List<Point3D>> atoms;
+    private static double RADIUS;
+    private static double TAIL_RADIUS;
+
+    private Map<Group, List<Point3D>> atoms;
     private ObservableList<Node> nodes;
     private int timeStep;
     private Long numberSteps;
@@ -31,13 +37,25 @@ public class RunAnimate implements Runnable {
         nodes = root.getChildren();
         atoms = new HashMap<>(trajectories.size());
 
+        RADIUS = 0.5 * scale;
+        TAIL_RADIUS = 0.3 * scale;
+
         Point3D point;
         for (Trajectory3D t : trajectories) {
             point = t.getPath().get(0);
             Sphere atom = createAtom(point.getX() * scale, point.getY() * scale, point.getZ() * scale,
-                    0.5 * scale, ColorAdapter.from(t.getColor()), ColorAdapter.from(t.getColor()).darker());
-            nodes.add(atom);
-            atoms.put(atom, t.getPath());
+                    RADIUS, ColorAdapter.from(t.getColor()), ColorAdapter.from(t.getColor()).darker());
+
+            Text text = new Text(t.getLabel());
+            text.setFont(new Font(12));
+            text.setFill(Color.LIME);
+            text.setTranslateX(point.getX() * scale + RADIUS);
+            text.setTranslateY(point.getY() * scale + RADIUS);
+            text.setTranslateZ(point.getZ() * scale + RADIUS);
+
+            Group group = new Group(atom, text);
+            nodes.add(group);
+            atoms.put(group, t.getPath());
         }
         numberSteps = trajectories.stream().mapToLong(t -> (long) t.getPath().size()).max().getAsLong();
     }
@@ -55,12 +73,12 @@ public class RunAnimate implements Runnable {
         }
     }
 
-    private Sphere createAtom(double X, double Y, double Z, double diameter, Color specular, Color diffuse) {
+    private Sphere createAtom(double X, double Y, double Z, double radius, Color specular, Color diffuse) {
         final PhongMaterial material = new PhongMaterial();
         material.setDiffuseColor(diffuse);
         material.setSpecularColor(specular);
 
-        Sphere atom = new Sphere(diameter);
+        Sphere atom = new Sphere(radius);
         atom.setMaterial(material);
         atom.setTranslateX(X);
         atom.setTranslateY(Y);
@@ -81,25 +99,34 @@ public class RunAnimate implements Runnable {
         Double[] oldCoordinates = new Double[3];
         List<Sphere> frame = new ArrayList<>();
 
-        for (Map.Entry<Sphere, List<Point3D>> shape : atoms.entrySet()) {
-            Sphere atom = shape.getKey();
-            oldCoordinates[0] = atom.getTranslateX();
-            oldCoordinates[1] = atom.getTranslateY();
-            oldCoordinates[2] = atom.getTranslateZ();
+        for (Map.Entry<Group, List<Point3D>> group : atoms.entrySet()) {
+            List<Point3D> trajectory = group.getValue();
+            for (Node node : group.getKey().getChildren()) {
+                oldCoordinates[0] = node.getTranslateX();
+                oldCoordinates[1] = node.getTranslateY();
+                oldCoordinates[2] = node.getTranslateZ();
 
-            atom.setTranslateX(shape.getValue().get(timePointer).getX() * scale);
-            atom.setTranslateY(shape.getValue().get(timePointer).getY() * scale);
-            atom.setTranslateZ(shape.getValue().get(timePointer).getZ() * scale);
+                node.setTranslateX(trajectory.get(timePointer).getX() * scale);
+                node.setTranslateY(trajectory.get(timePointer).getY() * scale);
+                node.setTranslateZ(trajectory.get(timePointer).getZ() * scale);
 
-            if (!addTail) continue;
-            if (oldCoordinates[0] != atom.getTranslateX()
-                    || oldCoordinates[1] != atom.getTranslateY()
-                    || oldCoordinates[2] != atom.getTranslateZ()) {
+                if (node instanceof Text) {
+                    node.setTranslateX(node.getTranslateX() + RADIUS);
+                    node.setTranslateY(node.getTranslateY() + RADIUS);
+                    node.setTranslateZ(node.getTranslateZ() + RADIUS);
+                    continue;
+                }
 
-                Sphere tail = createAtom(oldCoordinates[0], oldCoordinates[1], oldCoordinates[2],
-                        0.3 * scale, Color.GREY, Color.DARKGRAY);
-                nodes.add(tail);
-                frame.add(tail);
+                if (!addTail) continue;
+                if (oldCoordinates[0] != node.getTranslateX()
+                        || oldCoordinates[1] != node.getTranslateY()
+                        || oldCoordinates[2] != node.getTranslateZ()) {
+
+                    Sphere tail = createAtom(oldCoordinates[0], oldCoordinates[1], oldCoordinates[2],
+                            TAIL_RADIUS, Color.GREY, Color.DARKGRAY);
+                    nodes.add(tail);
+                    frame.add(tail);
+                }
             }
         }
 

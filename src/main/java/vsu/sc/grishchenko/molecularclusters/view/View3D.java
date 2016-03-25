@@ -7,11 +7,17 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
@@ -58,7 +64,7 @@ public class View3D extends Application {
 
     private static final double modifierFactor = 0.5;
 
-    private static final double scale = 12;
+    private static final double scale = 20;
 
     double mousePosX;
     double mousePosY;
@@ -184,6 +190,12 @@ public class View3D extends Application {
         animationThread = new Thread(animation);
         animationThread.start();
         world.getChildren().addAll(moleculeGroup);
+
+        world.lookupAll("Text").forEach(node -> {
+            node.getTransforms().add(new Rotate(180, Rotate.Z_AXIS));
+            node.getTransforms().add(new Rotate(-CAMERA_INITIAL_Y_ANGLE, Rotate.Y_AXIS));
+            node.getTransforms().add(new Rotate(-CAMERA_INITIAL_X_ANGLE, Rotate.X_AXIS));
+        });
     }
 
     private void handleMouse(Scene scene, final Node root) {
@@ -211,10 +223,20 @@ public class View3D extends Application {
                 modifier = SHIFT_MULTIPLIER;
             }
             if (me.isPrimaryButtonDown()) {
-                cameraXform.ry.setAngle(cameraXform.ry.getAngle() -
-                        mouseDeltaX * modifierFactor * modifier * ROTATION_SPEED);  //
-                cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
-                        mouseDeltaY * modifierFactor * modifier * ROTATION_SPEED);  // -
+                double deltaX = mouseDeltaX * modifierFactor * modifier * ROTATION_SPEED;
+                double deltaY = mouseDeltaY * modifierFactor * modifier * ROTATION_SPEED;
+
+                world.lookupAll("Text").forEach(node -> {
+                    Rotate ry = (Rotate) node.getTransforms().get(1);
+                    Rotate rx = (Rotate) node.getTransforms().get(2);
+
+                    ry.setAngle(ry.getAngle() + deltaX);
+                    rx.setAngle(rx.getAngle() - deltaY);
+                });
+
+                cameraXform.ry.setAngle(cameraXform.ry.getAngle() - deltaX);
+                cameraXform.rx.setAngle(cameraXform.rx.getAngle() + deltaY);
+
             } else if (me.isSecondaryButtonDown()) {
                 double z = cameraXform2.getTranslateZ();
                 double delta = Math.max(Math.abs(mouseDeltaX), Math.abs(mouseDeltaY));
@@ -284,6 +306,7 @@ public class View3D extends Application {
                 e.printStackTrace();
             }
         });
+        primaryStage.setResizable(false);
     }
 
     public static void main(String[] args) {
