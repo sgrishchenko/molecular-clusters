@@ -6,7 +6,9 @@ import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -14,14 +16,14 @@ import java.util.stream.DoubleStream;
 public final class Analyzer {
 
 
-    public static final Map<Class<? extends AbstractExperiment>, String> experimentDictionary
-            = Collections.unmodifiableMap(new HashMap<Class<? extends AbstractExperiment>, String>() {{
-        put(Experiment1.class, Experiment1.class.getSimpleName().toLowerCase());
-        put(Experiment2.class, Experiment2.class.getSimpleName().toLowerCase());
-    }});
+    /*public static final Map<Class<? extends ExperimentTask>, String> experimentDictionary
+            = Collections.unmodifiableMap(new HashMap<Class<? extends ExperimentTask>, String>() {{
+        put(ExperimentTask1.class, ExperimentTask1.class.getSimpleName().toLowerCase());
+        put(ExperimentTask2.class, ExperimentTask2.class.getSimpleName().toLowerCase());
+    }});*/
 
-    public static String createExperimentDirectory(Class<? extends AbstractExperiment> aClass) {
-        String filePath = experimentDictionary.get(aClass) + "/";
+    public static String createExperimentDirectory(Class<?> aClass) {
+        String filePath = /*experimentDictionary.get(aClass)*/ aClass.getSimpleName().toLowerCase() + "/";
         if (Files.notExists(Paths.get(filePath))) {
             new File(filePath).mkdirs();
             return filePath;

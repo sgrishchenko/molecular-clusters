@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <VBox prefHeight="400.0" prefWidth="753.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vsu.sc.grishchenko.molecularclusters.view.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
@@ -59,14 +56,9 @@
                             <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefWidth="80.0" text="Запустить" />
                             <Button fx:id="startFromFile" mnemonicParsing="false" onAction="#startFromFile" prefWidth="80.0" text="Из файла" />
                               <Separator prefWidth="200.0" />
-                              <SplitMenuButton mnemonicParsing="false" prefWidth="80.0" text="Анализ">
-                                <items>
-                                  <MenuItem mnemonicParsing="false" onAction="#exp1" text="Эксперимент 1" />
-                                  <MenuItem mnemonicParsing="false" onAction="#exp2" text="Эксперимент 2" />
-                                </items>
-                              </SplitMenuButton>
+                              <Button mnemonicParsing="false" prefWidth="80.0" text="Задание" onAction="#task"/>
                             <Button fx:id="analyzeFromFile" mnemonicParsing="false" onAction="#analyzeFromFile" prefWidth="80.0" text="Из файла" />
-                            <Button fx:id="analyzeFromFolder" mnemonicParsing="false" onAction="#analyzeFromFolder" prefWidth="80.0" text="Из папки" />
+                            <!--<Button fx:id="analyzeFromFolder" mnemonicParsing="false" onAction="#analyzeFromFolder" prefWidth="80.0" text="Из папки" />-->
                           </items>
                         </ToolBar>
                      </children>

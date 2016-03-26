@@ -1,20 +1,9 @@
 package vsu.sc.grishchenko.molecularclusters.experiment;
 
-import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
-import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
-import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
-import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.getParams;
-import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.getTubeRadius;
-
-public class Experiment1 extends AbstractExperiment {
-    public Experiment1(String filePath,
-                       List<MotionEquationData> dataList,
-                       Function<List<MotionEquationData>, List<Trajectory>> source) {
+public class ExperimentTask1 /*extends ExperimentTask*/ {
+   /* public ExperimentTask1(String filePath,
+                           List<MotionEquationData> dataList,
+                           Function<List<MotionEquationData>, List<Trajectory>> source) {
         super(filePath, dataList, source);
     }
 
@@ -57,5 +46,5 @@ public class Experiment1 extends AbstractExperiment {
         }
 
         return results;
-    }
+    }*/
 }

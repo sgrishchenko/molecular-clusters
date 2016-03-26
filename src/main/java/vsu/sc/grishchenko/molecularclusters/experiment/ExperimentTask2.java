@@ -1,22 +1,12 @@
 package vsu.sc.grishchenko.molecularclusters.experiment;
 
-import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
-import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
-import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
+public class ExperimentTask2 /*extends ExperimentTask */{
+    /*private List<Trajectory> solvingSystemResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
-import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.getParams;
-
-public class Experiment2 extends AbstractExperiment {
-    private List<Trajectory> solvingSystemResult;
-
-    public Experiment2(String filePath,
-                       List<MotionEquationData> dataList,
-                       Function<List<MotionEquationData>, List<Trajectory>> source,
-                       List<Trajectory> solvingSystemResult) {
+    public ExperimentTask2(String filePath,
+                           List<MotionEquationData> dataList,
+                           Function<List<MotionEquationData>, List<Trajectory>> source,
+                           List<Trajectory> solvingSystemResult) {
         super(filePath, dataList, source);
         this.solvingSystemResult = solvingSystemResult;
     }
@@ -57,5 +47,5 @@ public class Experiment2 extends AbstractExperiment {
         }
 
         return results;
-    }
+    }*/
 }
