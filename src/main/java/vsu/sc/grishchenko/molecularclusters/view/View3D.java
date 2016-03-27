@@ -15,12 +15,12 @@ import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
 import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
 import vsu.sc.grishchenko.molecularclusters.database.EntityManager;
 import vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory3D;
+import vsu.sc.grishchenko.molecularclusters.settings.CurrentSettings;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -111,7 +111,7 @@ public class View3D extends Application {
                     while (isButtonPressed) {
                         runLater(() -> action.accept(animation));
                         try {
-                            Thread.sleep(GlobalSettings.getInstance().viewSettings.getAnimateStepSize());
+                            Thread.sleep(CurrentSettings.getInstance().getAnimateStepSize());
                         } catch (InterruptedException ex) {
                             ex.printStackTrace();
                         }
@@ -172,7 +172,7 @@ public class View3D extends Application {
     private void buildMolecule() {
         animation = new RunAnimate(Trajectory3D.from(trajectories),
                 moleculeGroup,
-                GlobalSettings.getInstance().viewSettings.getAnimateStepSize(),
+                CurrentSettings.getInstance().getAnimateStepSize(),
                 scale);
         animationThread = new Thread(animation);
         animationThread.start();

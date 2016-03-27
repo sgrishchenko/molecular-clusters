@@ -21,7 +21,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
 import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
 import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
 import vsu.sc.grishchenko.molecularclusters.experiment.Experiment;
@@ -29,6 +28,8 @@ import vsu.sc.grishchenko.molecularclusters.experiment.ExperimentTask;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import vsu.sc.grishchenko.molecularclusters.math.Solver;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
+import vsu.sc.grishchenko.molecularclusters.settings.CurrentSettings;
+import vsu.sc.grishchenko.molecularclusters.settings.Settings;
 
 import java.io.File;
 import java.io.FileReader;
@@ -125,8 +126,8 @@ public class MainController {
                           List<Trajectory> result;
                           updateMessage("Выполняются вычисления...");
                           result = Solver.solveVerlet(read(), 0.,
-                                  GlobalSettings.getInstance().viewSettings.getCountSteps(),
-                                  GlobalSettings.getInstance().viewSettings.getStepSize());
+                                  CurrentSettings.getInstance().getCountSteps(),
+                                  CurrentSettings.getInstance().getStepSize());
                           updateMessage("Вычисления выполнены");
 
                           return result;
@@ -235,7 +236,7 @@ public class MainController {
     /*public void exp1() {
         String filePath = Analyzer.createExperimentDirectory(ExperimentTask1.class);
         DateTime start = new DateTime();
-        GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
+        CurrentSettings.ExperimentSettings settings = CurrentSettings.getInstance().experimentSettings;
         Function<List<MotionEquationData>, List<Trajectory>> source
                 = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
         startTask(new ExperimentTask1(filePath, read(), source), event -> {
@@ -250,7 +251,7 @@ public class MainController {
 
         String filePath = Analyzer.createExperimentDirectory(ExperimentTask2.class);
         DateTime start = new DateTime();
-        GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
+        CurrentSettings.ExperimentSettings settings = CurrentSettings.getInstance().experimentSettings;
         Function<List<MotionEquationData>, List<Trajectory>> source
                 = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
 
@@ -381,13 +382,6 @@ public class MainController {
     }*/
 
     public void settings() throws Exception {
-        GlobalSettings.ExperimentSettings experimentSettings = GlobalSettings.getInstance().experimentSettings;
-        if (experimentSettings.getMovingPointLabel() == null) {
-            List<MotionEquationData> dataList = read();
-            if (dataList != null && !dataList.isEmpty()) {
-                experimentSettings.setMovingPointLabel(dataList.get(dataList.size() - 1).getLabel());
-            }
-        }
         new Settings().start(new Stage());
     }
 
@@ -403,7 +397,7 @@ public class MainController {
     public void task() throws Exception {
         new Experiment((config -> {
             DateTime start = new DateTime();
-            GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
+            CurrentSettings settings = CurrentSettings.getInstance();
             Function<List<MotionEquationData>, List<Trajectory>> source
                     = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
             startTask(new ExperimentTask(read(), source, config), event -> {

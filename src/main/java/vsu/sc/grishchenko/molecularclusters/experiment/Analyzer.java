@@ -1,11 +1,8 @@
 package vsu.sc.grishchenko.molecularclusters.experiment;
 
-import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
+import vsu.sc.grishchenko.molecularclusters.settings.CurrentSettings;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,31 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 public final class Analyzer {
-
-
-    /*public static final Map<Class<? extends ExperimentTask>, String> experimentDictionary
-            = Collections.unmodifiableMap(new HashMap<Class<? extends ExperimentTask>, String>() {{
-        put(ExperimentTask1.class, ExperimentTask1.class.getSimpleName().toLowerCase());
-        put(ExperimentTask2.class, ExperimentTask2.class.getSimpleName().toLowerCase());
-    }});*/
-
-    public static String createExperimentDirectory(Class<?> aClass) {
-        String filePath = /*experimentDictionary.get(aClass)*/ aClass.getSimpleName().toLowerCase() + "/";
-        if (Files.notExists(Paths.get(filePath))) {
-            new File(filePath).mkdirs();
-            return filePath;
-        }
-
-        int i = 1;
-        String oldFilePath = filePath;
-        do {
-            filePath = oldFilePath.replaceAll("/$", "(" + i + ")/");
-            i++;
-        } while (Files.exists(Paths.get(filePath)));
-        new File(filePath).mkdirs();
-        return filePath;
-    }
-
     public static AnalyzeResult getParams(List<Trajectory> solvingSystemResult) {
 
         List<String> movingPoints = getMovingPoints(solvingSystemResult);
@@ -56,7 +28,7 @@ public final class Analyzer {
                 .collect(Collectors.toMap(Trajectory::getLabel, Function.identity()));
 
         double length = getTubeLength(tubeOnly);
-        double radius = getTubeRadius(tubeOnly);
+        //double radius = getTubeRadius(tubeOnly);
 
         Double initRadius = Math.sqrt(
                 Math.pow(resultMap.get(xMovingPoint).getPath().get(0), 2) +
@@ -112,7 +84,7 @@ public final class Analyzer {
                 pdx = dx;
                 pdy = dy;
                 pdz = dz;
-                time += GlobalSettings.getInstance().experimentSettings.getStepSize();
+                time += CurrentSettings.getInstance().getStepSize();
                 S += r;
                 System.out.println(r);
             }

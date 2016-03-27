@@ -1,4 +1,4 @@
-package vsu.sc.grishchenko.molecularclusters.view;
+package vsu.sc.grishchenko.molecularclusters.settings;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
