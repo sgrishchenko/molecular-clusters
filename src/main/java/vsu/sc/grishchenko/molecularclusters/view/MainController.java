@@ -22,7 +22,10 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
-import vsu.sc.grishchenko.molecularclusters.experiment.*;
+import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
+import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
+import vsu.sc.grishchenko.molecularclusters.experiment.Experiment;
+import vsu.sc.grishchenko.molecularclusters.experiment.ExperimentTask;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import vsu.sc.grishchenko.molecularclusters.math.Solver;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
@@ -399,12 +402,11 @@ public class MainController {
 
     public void task() throws Exception {
         new Experiment((config -> {
-            String filePath = Analyzer.createExperimentDirectory(ExperimentTask1.class);
             DateTime start = new DateTime();
             GlobalSettings.ExperimentSettings settings = GlobalSettings.getInstance().experimentSettings;
             Function<List<MotionEquationData>, List<Trajectory>> source
                     = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
-            startTask(new ExperimentTask(filePath, read(), source, config), event -> {
+            startTask(new ExperimentTask(read(), source, config), event -> {
                 //saveExperiments(filePath, (List<List<AnalyzeResult>>) event.getSource().getValue());
                 showPeriodInfoDialog(start);
             });

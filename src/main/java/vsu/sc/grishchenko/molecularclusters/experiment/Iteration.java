@@ -3,6 +3,7 @@ package vsu.sc.grishchenko.molecularclusters.experiment;
 import java.util.function.BiConsumer;
 
 public class Iteration<T> {
+    private String name;
     private double from;
     private double to;
     private double step;
@@ -10,7 +11,8 @@ public class Iteration<T> {
     private BiConsumer<T, Double> action;
     private int direction = 1;
 
-    public Iteration(double from, double to, double step, BiConsumer<T, Double> action) {
+    public Iteration(String name, double from, double to, double step, BiConsumer<T, Double> action) {
+        this.name = name;
         this.from = from;
         this.to = to;
         this.step = step;
@@ -35,6 +37,14 @@ public class Iteration<T> {
 
     public void restart() {
         currentValue = from;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getFrom() {

@@ -1,7 +1,10 @@
 package vsu.sc.grishchenko.molecularclusters.entity;
 
+import org.joda.time.DateTime;
+import vsu.sc.grishchenko.molecularclusters.experiment.ExperimentConfig;
+
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -19,6 +22,22 @@ public class ExperimentEntity {
     private Set<TrajectoryListEntity> trajectories;
     private Set<IterationEntity> iterations;
 
+    public ExperimentEntity() {
+    }
+
+    public ExperimentEntity(ExperimentConfig config) {
+        this.vz = config.getInitialVelocity()[0];
+        this.vy = config.getInitialVelocity()[1];
+        this.vx = config.getInitialVelocity()[2];
+
+        this.z = config.getInitialPosition()[0];
+        this.y = config.getInitialPosition()[1];
+        this.x = config.getInitialPosition()[2];
+
+        this.movLabel = config.getMovingPointLabel();
+        this.date = new DateTime().toDate();
+    }
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +50,8 @@ public class ExperimentEntity {
     }
 
     @Basic
-    @Column(name = "date")
+    @Column(name = "date", columnDefinition = "DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getDate() {
         return date;
     }

@@ -31,7 +31,7 @@ public class ExperimentController implements Initializable {
     public CheckBox changeT; public Label labelTfrom; public TextField Tfrom; public TextField Tto; public TextField Tstep;
     public CheckBox changeF; public Label labelFfrom; public TextField Ffrom; public TextField Fto; public TextField Fstep;
 
-    private static Iteration<MotionEquationData> emptyIteration = new Iteration<>(0., 0., 0., null);
+    private static Iteration<MotionEquationData> emptyIteration = new Iteration<>(null, 0., 0., 0., null);
 
     private Map<String, ExperimentConfig> templates = new LinkedHashMap<>();
 
@@ -80,13 +80,13 @@ public class ExperimentController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        positionDimensions.add(new Dimension(changeX, labelXfrom, Xfrom, Xto, Xstep, getAction(MotionEquationData::getInitialPosition, 0)));
-        positionDimensions.add(new Dimension(changeY, labelYfrom, Yfrom, Yto, Ystep, getAction(MotionEquationData::getInitialPosition, 1)));
-        positionDimensions.add(new Dimension(changeZ, labelZfrom, Zfrom, Zto, Zstep, getAction(MotionEquationData::getInitialPosition, 2)));
+        positionDimensions.add(new Dimension("X", changeX, labelXfrom, Xfrom, Xto, Xstep, getAction(MotionEquationData::getInitialPosition, 0)));
+        positionDimensions.add(new Dimension("Y", changeY, labelYfrom, Yfrom, Yto, Ystep, getAction(MotionEquationData::getInitialPosition, 1)));
+        positionDimensions.add(new Dimension("Y", changeZ, labelZfrom, Zfrom, Zto, Zstep, getAction(MotionEquationData::getInitialPosition, 2)));
 
-        velocityDimensions.add(new Dimension(changeV, labelVfrom, Vfrom, Vto, Vstep, getVAction(MotionEquationData::getInitialVelocity, 0)));
-        velocityDimensions.add(new Dimension(changeT, labelTfrom, Tfrom, Tto, Tstep, getVAction(MotionEquationData::getInitialVelocity, 1)));
-        velocityDimensions.add(new Dimension(changeF, labelFfrom, Ffrom, Fto, Fstep, getVAction(MotionEquationData::getInitialVelocity, 2)));
+        velocityDimensions.add(new Dimension("VX", changeV, labelVfrom, Vfrom, Vto, Vstep, getVAction(MotionEquationData::getInitialVelocity, 0)));
+        velocityDimensions.add(new Dimension("VY", changeT, labelTfrom, Tfrom, Tto, Tstep, getVAction(MotionEquationData::getInitialVelocity, 1)));
+        velocityDimensions.add(new Dimension("VY", changeF, labelFfrom, Ffrom, Fto, Fstep, getVAction(MotionEquationData::getInitialVelocity, 2)));
 
         allDimensions.addAll(positionDimensions);
         allDimensions.addAll(velocityDimensions);
@@ -117,17 +117,17 @@ public class ExperimentController implements Initializable {
             setInitialVelocity(new Double[] {75., 90., 90.});
 
             setIterations(Arrays.asList(
-                    new Iteration<>(0, -2, 0.5, positionDimensions.get(0).getAction()),
+                    new Iteration<>("X", 0, -2, 0.5, positionDimensions.get(0).getAction()),
                     emptyIteration,
                     emptyIteration,
                     emptyIteration,
-                    new Iteration<>(90, 0, 10, velocityDimensions.get(1).getAction()),
+                    new Iteration<>("VY", 90, 0, 10, velocityDimensions.get(1).getAction()),
                     emptyIteration
             ));
         }});
         templates.put("Изменение вертикального угла для фиксированного горизонтального угла", new ExperimentConfig() {{
             setInitialPosition(new Double[] {0., -3., 0.});
-            setInitialVelocity(new Double[] {75., 75., 90.});
+            setInitialVelocity(new Double[] {75., 45., 90.});
 
             setIterations(Arrays.asList(
                     emptyIteration,
@@ -135,7 +135,7 @@ public class ExperimentController implements Initializable {
                     emptyIteration,
                     emptyIteration,
                     emptyIteration,
-                    new Iteration<>(90, 0, 10, velocityDimensions.get(2).getAction())
+                    new Iteration<>("VZ", 90, 0, 10, velocityDimensions.get(2).getAction())
             ));
         }});
         template.setItems(FXCollections.observableArrayList(templates.keySet()));
@@ -161,7 +161,7 @@ public class ExperimentController implements Initializable {
         config.setIterations(allDimensions
                 .stream()
                 .filter(d -> d.getChange().isSelected())
-                .map(d -> new Iteration<>(getDouble(d.getFrom()), getDouble(d.getTo()), getDouble(d.getStep()), d.getAction()))
+                .map(d -> new Iteration<>(d.getName(), getDouble(d.getFrom()), getDouble(d.getTo()), getDouble(d.getStep()), d.getAction()))
                 .collect(Collectors.toList()));
 
         cancel();
@@ -189,6 +189,7 @@ public class ExperimentController implements Initializable {
     }
 
     private class Dimension {
+        private String name;
         private CheckBox change;
         private Label labelFrom;
 
@@ -198,15 +199,20 @@ public class ExperimentController implements Initializable {
 
         private BiConsumer<MotionEquationData, Double> action;
 
-        public Dimension(CheckBox change, Label labelFrom,
+        public Dimension(String name, CheckBox change, Label labelFrom,
                          TextField from, TextField to, TextField step,
                          BiConsumer<MotionEquationData, Double>  action) {
+            this.name = name;
             this.change = change;
             this.labelFrom = labelFrom;
             this.from = from;
             this.to = to;
             this.step = step;
             this.action = action;
+        }
+
+        public String getName() {
+            return name;
         }
 
         public CheckBox getChange() {

@@ -2,12 +2,16 @@ package vsu.sc.grishchenko.molecularclusters.experiment;
 
 import com.google.gson.Gson;
 import javafx.concurrent.Task;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import vsu.sc.grishchenko.molecularclusters.database.EntityManager;
+import vsu.sc.grishchenko.molecularclusters.entity.ExperimentEntity;
+import vsu.sc.grishchenko.molecularclusters.entity.IterationEntity;
+import vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -15,21 +19,19 @@ import java.util.function.Function;
 import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.getParams;
 
 public class ExperimentTask extends Task<List<AnalyzeResult>> {
-    private String filePath;
     protected List<MotionEquationData> dataList;
     private Function<List<MotionEquationData>, List<Trajectory>> source;
     private ExperimentConfig config;
+    private ExperimentEntity experimentEntity;
 
     protected int experimentIndex = 1;
     protected int experimentLength;
 
     protected Gson gson = new Gson();
 
-    public ExperimentTask(String filePath,
-                          List<MotionEquationData> dataList,
+    public ExperimentTask(List<MotionEquationData> dataList,
                           Function<List<MotionEquationData>, List<Trajectory>> source,
                           ExperimentConfig config) {
-        this.filePath = filePath;
         this.dataList = dataList;
         this.source = source;
         this.config = config;
@@ -40,15 +42,12 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
 
 
         List<Trajectory> solveResult = source.apply(dataList);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm");
+        String experimentName = String.format("exp_%d(%s)",
+                experimentIndex,
+                new DateTime(experimentEntity.getDate().getTime()).toString(formatter));
 
-        if (filePath != null) {
-            File out = new File(filePath + "exp_" + experimentIndex + ".txt");
-            try (FileWriter writer = new FileWriter(out)) {
-                writer.write(gson.toJson(solveResult));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        EntityManager.save(new TrajectoryListEntity(experimentEntity, experimentName, gson.toJson(solveResult)));
 
         if (isCancelled()) {
             updateMessage(String.format("Эксперимент прерван, выполненые расчеты - %d из %d.",
@@ -80,6 +79,14 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
 
     @Override
     protected List<AnalyzeResult> call() throws Exception {
+        experimentEntity = new ExperimentEntity(config);
+        EntityManager.save(experimentEntity);
+
+        config.getIterations()
+                .stream()
+                .map(iteration -> new IterationEntity(experimentEntity, iteration))
+                .forEach(EntityManager::save);
+
         MotionEquationData variableEquation = dataList
                 .stream()
                 .filter(data -> data.getLabel().trim().equalsIgnoreCase(config.getMovingPointLabel().trim()))

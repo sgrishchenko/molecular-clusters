@@ -1,5 +1,7 @@
 package vsu.sc.grishchenko.molecularclusters.entity;
 
+import vsu.sc.grishchenko.molecularclusters.experiment.Iteration;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,6 +13,17 @@ public class IterationEntity {
     private double step;
     private String dimension;
     private ExperimentEntity experiment;
+
+    public IterationEntity() {
+    }
+
+    public IterationEntity(ExperimentEntity experiment, Iteration<?> iteration) {
+        this.experiment = experiment;
+        this.from = iteration.getFrom();
+        this.to = iteration.getTo();
+        this.step = iteration.getStep();
+        this.dimension = iteration.getName();
+    }
 
     @Id
     @Column(name = "id")
@@ -24,7 +37,7 @@ public class IterationEntity {
     }
 
     @Basic
-    @Column(name = "from")
+    @Column(name = "frm")
     public double getFrom() {
         return from;
     }
@@ -34,7 +47,7 @@ public class IterationEntity {
     }
 
     @Basic
-    @Column(name = "to")
+    @Column(name = "too")
     public double getTo() {
         return to;
     }
