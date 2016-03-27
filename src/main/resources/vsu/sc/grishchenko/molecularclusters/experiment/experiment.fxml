@@ -90,12 +90,12 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="Xto" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-            <TextField fx:id="Yto" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
-            <TextField fx:id="Zto" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
-            <TextField fx:id="Vto" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
-            <TextField fx:id="Tto" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="9" />
-            <TextField fx:id="Fto" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="10" />
+            <TextField fx:id="Xto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+            <TextField fx:id="Yto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+            <TextField fx:id="Zto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
+            <TextField fx:id="Vto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
+            <TextField fx:id="Tto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="9" />
+            <TextField fx:id="Fto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="10" />
             <Label text="с шагом" GridPane.columnIndex="5" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -126,16 +126,16 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="Xstep" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="5" />
-            <TextField fx:id="Ystep" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="6" />
-            <TextField fx:id="Vstep" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="8" />
-            <TextField fx:id="Zstep" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="7" />
-            <TextField fx:id="Fstep" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="10" />
-            <TextField fx:id="Tstep" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="9" />
+            <TextField fx:id="Xstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="5" />
+            <TextField fx:id="Ystep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="6" />
+            <TextField fx:id="Vstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="8" />
+            <TextField fx:id="Zstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="7" />
+            <TextField fx:id="Fstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="10" />
+            <TextField fx:id="Tstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="9" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="11">
                <children>
-                  <Button onAction="#cancel" cancelButton="true" mnemonicParsing="false" prefWidth="70.0" text="Отмена" />
-                  <Button onAction="#start" defaultButton="true" mnemonicParsing="false" prefWidth="70.0" text="OK" />
+                  <Button cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefWidth="70.0" text="Отмена" />
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#start" prefWidth="70.0" text="OK" />
                </children>
             </HBox>
             <CheckBox fx:id="changeX" mnemonicParsing="false" text="Изменение координаты X:" wrapText="true" GridPane.rowIndex="5">
@@ -191,7 +191,7 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
-            <ChoiceBox fx:id="template" prefHeight="25.0" prefWidth="120.0" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="template" onAction="#setTemplate" prefHeight="25.0" prefWidth="120.0" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="4" />
             <TextField fx:id="label" prefHeight="25.0" prefWidth="98.0" GridPane.columnIndex="1" GridPane.columnSpan="4" />
             <Label text="Метка перемещаемой точки:">
                <GridPane.margin>

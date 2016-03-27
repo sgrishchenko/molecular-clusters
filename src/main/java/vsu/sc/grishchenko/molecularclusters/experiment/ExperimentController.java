@@ -1,5 +1,6 @@
 package vsu.sc.grishchenko.molecularclusters.experiment;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -9,16 +10,14 @@ import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ExperimentController implements Initializable {
-    public ChoiceBox template;
+    public ChoiceBox<String> template;
 
     public TextField H1;
     public TextField H2;
@@ -31,6 +30,10 @@ public class ExperimentController implements Initializable {
     public CheckBox changeV; public Label labelVfrom; public TextField Vfrom; public TextField Vto; public TextField Vstep;
     public CheckBox changeT; public Label labelTfrom; public TextField Tfrom; public TextField Tto; public TextField Tstep;
     public CheckBox changeF; public Label labelFfrom; public TextField Ffrom; public TextField Fto; public TextField Fstep;
+
+    private static Iteration<MotionEquationData> emptyIteration = new Iteration<>(0., 0., 0., null);
+
+    private Map<String, ExperimentConfig> templates = new LinkedHashMap<>();
 
     private List<Dimension> positionDimensions = new ArrayList<>();
     private List<Dimension> velocityDimensions = new ArrayList<>();
@@ -88,7 +91,55 @@ public class ExperimentController implements Initializable {
         allDimensions.addAll(positionDimensions);
         allDimensions.addAll(velocityDimensions);
 
-        allDimensions.stream().forEach(d -> d.getLabelFrom().textProperty().bind(d.getFrom().textProperty()));
+        allDimensions.stream().forEach(d -> {
+            d.getLabelFrom().textProperty().bind(d.getFrom().textProperty());
+            d.getChange().selectedProperty().addListener((observable, oldValue, newValue) -> {
+                d.getTo().setDisable(!newValue);
+                d.getStep().setDisable(!newValue);
+            });
+        });
+
+        templates.put("...", new ExperimentConfig() {{
+            setInitialPosition(new Double[] {0., 0., 0.});
+            setInitialVelocity(new Double[] {0., 0., 0.});
+
+            setIterations(Arrays.asList(
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration
+            ));
+        }});
+        templates.put("Сдвиг вдоль оси X + изменение горизонтального угла", new ExperimentConfig() {{
+            setInitialPosition(new Double[] {0., -3., 0.});
+            setInitialVelocity(new Double[] {75., 90., 90.});
+
+            setIterations(Arrays.asList(
+                    new Iteration<>(0, -2, 0.5, positionDimensions.get(0).getAction()),
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration,
+                    new Iteration<>(90, 0, 10, velocityDimensions.get(1).getAction()),
+                    emptyIteration
+            ));
+        }});
+        templates.put("Изменение вертикального угла для фиксированного горизонтального угла", new ExperimentConfig() {{
+            setInitialPosition(new Double[] {0., -3., 0.});
+            setInitialVelocity(new Double[] {75., 75., 90.});
+
+            setIterations(Arrays.asList(
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration,
+                    emptyIteration,
+                    new Iteration<>(90, 0, 10, velocityDimensions.get(2).getAction())
+            ));
+        }});
+        template.setItems(FXCollections.observableArrayList(templates.keySet()));
+        template.setValue("...");
     }
 
     public void cancel() {
@@ -115,6 +166,26 @@ public class ExperimentController implements Initializable {
 
         cancel();
         onStart.accept(config);
+    }
+
+    public void setTemplate() {
+        ExperimentConfig config = templates.get(template.getValue());
+
+        for (int i = 0; i < 3; i++) {
+            positionDimensions.get(i).getFrom().setText(String.valueOf(config.getInitialPosition()[i]));
+            velocityDimensions.get(i).getFrom().setText(String.valueOf(config.getInitialVelocity()[i]));
+        }
+
+        Dimension dimension;
+        Iteration iteration;
+        for (int i = 0; i < 6; i++) {
+            dimension = allDimensions.get(i);
+            iteration = config.getIterations().get(i);
+
+            dimension.getChange().setSelected(iteration != emptyIteration);
+            dimension.getTo().setText(String.valueOf(config.getIterations().get(i).getTo()));
+            dimension.getStep().setText(String.valueOf(config.getIterations().get(i).getStep()));
+        }
     }
 
     private class Dimension {
