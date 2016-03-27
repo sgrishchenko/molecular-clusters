@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">
+            org.hibernate.dialect.MySQLDialect
+        </property>
+        <property name="hibernate.connection.driver_class">
+            com.mysql.jdbc.Driver
+        </property>
+
+        <property name="hibernate.connection.url">
+            jdbc:mysql://sql7.freesqldatabase.com:3306/sql7112479
+        </property>
+        <property name="hibernate.connection.username">
+            sql7112479
+        </property>
+        <property name="hibernate.connection.password">
+            XS18HgMgLJ
+        </property>
+
+        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.ColorEntity"/>
+        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.ExperimentEntity"/>
+        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.IterationEntity"/>
+        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.LinkExperimentIterationEntity"/>
+        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.PathEntity"/>
+        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.TrajectoryEntity"/>
+        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity"/>
+    </session-factory>
+</hibernate-configuration>
