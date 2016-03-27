@@ -5,18 +5,23 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class EntityManager {
     private static SessionFactory factory;
     private static Session session;
-    private static EntityManager instance = new EntityManager();
 
     private EntityManager() {
+    }
+
+    public static void initialise() {
         try {
             factory = new Configuration()
-                    .configure(getClass().getResource("/hibernate/hibernate.cfg.xml"))
+                    .configure(EntityManager.class.getResource("/hibernate/hibernate.cfg.xml"))
                     .buildSessionFactory();
         } catch (Throwable ex) {
             System.err.println("Failed to create sessionFactory object." + ex);
@@ -38,11 +43,42 @@ public class EntityManager {
             if (tx != null) tx.rollback();
             e.printStackTrace();
         }
+        session.flush();
         return result;
     }
 
     public static void save(Object entity) {
         transactional(() -> session.save(entity));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T find(long id, Class<T> tClass) {
+        return transactional(() -> (T) session.createCriteria(tClass)
+                .add(Restrictions.idEq(id))
+                .uniqueResult());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T find(String fieldName, Object value, Class<T> tClass) {
+        return transactional(() -> (T) session.createCriteria(tClass)
+                .add(Restrictions.eq(fieldName, value))
+                .uniqueResult());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> findList(String fieldName, Object value, Class<T> tClass) {
+        return transactional(() -> (List<T>) session.createCriteria(tClass)
+                .add(Restrictions.eq(fieldName, value))
+                .list());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> boolean isExists(String fieldName, Object value, Class<T> tClass) {
+        return transactional(() -> session.createCriteria(tClass)
+                .add(Restrictions.eq(fieldName, value))
+                .setProjection(Projections.id())
+                .setMaxResults(1)
+                .list() != null);
     }
 
     public static void close() {

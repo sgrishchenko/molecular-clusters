@@ -2,6 +2,7 @@ package vsu.sc.grishchenko.molecularclusters.entity;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "experiment")
@@ -15,6 +16,8 @@ public class ExperimentEntity {
     private double vx;
     private double vy;
     private double vz;
+    private Set<TrajectoryListEntity> trajectories;
+    private Set<IterationEntity> iterations;
 
     @Id
     @Column(name = "id")
@@ -147,5 +150,23 @@ public class ExperimentEntity {
         temp = Double.doubleToLongBits(vz);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    @OneToMany(mappedBy = "experiment")
+    public Set<TrajectoryListEntity> getTrajectories() {
+        return trajectories;
+    }
+
+    public void setTrajectories(Set<TrajectoryListEntity> trajectories) {
+        this.trajectories = trajectories;
+    }
+
+    @OneToMany(mappedBy = "experiment")
+    public Set<IterationEntity> getIterations() {
+        return iterations;
+    }
+
+    public void setIterations(Set<IterationEntity> iterations) {
+        this.iterations = iterations;
     }
 }

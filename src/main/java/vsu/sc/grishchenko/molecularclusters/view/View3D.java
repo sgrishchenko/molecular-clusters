@@ -7,27 +7,22 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.GlobalSettings;
 import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
+import vsu.sc.grishchenko.molecularclusters.database.EntityManager;
+import vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory3D;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -128,16 +123,8 @@ public class View3D extends Application {
         };
 
         new LinkedHashMap<String, Consumer<Button>>() {{
-            put("save", button -> button.setOnAction(e -> {
-                File file = fileChooser.showSaveDialog(root.getScene().getWindow());
-                if (file == null) return;
-                try (FileWriter writer = new FileWriter(file)) {
-                    writer.write(gson.toJson(trajectories));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                MainController.updateTitle(root.getScene(), file);
-            }));
+            //TODO: добавить возможность ввода имени и проверку на уникальность
+            put("save", button -> button.setOnAction(e -> EntityManager.save(new TrajectoryListEntity("test", gson.toJson(trajectories)))));
             put("play", button -> button.setOnAction(e -> animation.play()));
             put("pause", button -> button.setOnAction(e -> animation.pause()));
             put("reset", button -> button.setOnAction(e -> animation.reset()));

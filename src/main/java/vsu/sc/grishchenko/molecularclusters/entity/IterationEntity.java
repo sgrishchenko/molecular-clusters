@@ -10,6 +10,7 @@ public class IterationEntity {
     private double to;
     private double step;
     private String dimension;
+    private ExperimentEntity experiment;
 
     @Id
     @Column(name = "id")
@@ -91,5 +92,19 @@ public class IterationEntity {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (dimension != null ? dimension.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne
+    @JoinTable(
+            name = "link_experiment_iteration",
+            joinColumns = @JoinColumn(name = "iteration_id", referencedColumnName = "id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "experiment_id", referencedColumnName = "id", nullable = false)
+    )
+    public ExperimentEntity getExperiment() {
+        return experiment;
+    }
+
+    public void setExperiment(ExperimentEntity experiment) {
+        this.experiment = experiment;
     }
 }

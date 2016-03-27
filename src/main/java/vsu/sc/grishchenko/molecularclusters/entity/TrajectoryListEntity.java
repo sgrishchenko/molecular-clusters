@@ -6,7 +6,22 @@ import javax.persistence.*;
 @Table(name = "trajectory_list")
 public class TrajectoryListEntity {
     private long id;
-    private Long experimentId;
+    private String name;
+    private String json;
+    private ExperimentEntity experiment;
+
+    public TrajectoryListEntity() {
+    }
+
+    public TrajectoryListEntity(String name, String json) {
+        this.name = name;
+        this.json = json;
+    }
+
+    public TrajectoryListEntity(ExperimentEntity experiment, String name, String json) {
+        this(name, json);
+        this.experiment = experiment;
+    }
 
     @Id
     @Column(name = "id")
@@ -20,13 +35,23 @@ public class TrajectoryListEntity {
     }
 
     @Basic
-    @Column(name = "experiment_id")
-    public Long getExperimentId() {
-        return experimentId;
+    @Column(name = "name")
+    public String getName() {
+        return name;
     }
 
-    public void setExperimentId(Long experimentId) {
-        this.experimentId = experimentId;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Basic
+    @Column(name = "json")
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
     }
 
     @Override
@@ -37,7 +62,8 @@ public class TrajectoryListEntity {
         TrajectoryListEntity that = (TrajectoryListEntity) o;
 
         if (id != that.id) return false;
-        if (experimentId != null ? !experimentId.equals(that.experimentId) : that.experimentId != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (json != null ? !json.equals(that.json) : that.json != null) return false;
 
         return true;
     }
@@ -45,7 +71,18 @@ public class TrajectoryListEntity {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (experimentId != null ? experimentId.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (json != null ? json.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "experiment_id", referencedColumnName = "id")
+    public ExperimentEntity getExperiment() {
+        return experiment;
+    }
+
+    public void setExperiment(ExperimentEntity experiment) {
+        this.experiment = experiment;
     }
 }

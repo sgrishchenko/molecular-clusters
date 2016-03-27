@@ -21,12 +21,8 @@
             XS18HgMgLJ
         </property>
 
-        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.ColorEntity"/>
         <mapping class="vsu.sc.grishchenko.molecularclusters.entity.ExperimentEntity"/>
         <mapping class="vsu.sc.grishchenko.molecularclusters.entity.IterationEntity"/>
-        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.LinkExperimentIterationEntity"/>
-        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.PathEntity"/>
-        <mapping class="vsu.sc.grishchenko.molecularclusters.entity.TrajectoryEntity"/>
         <mapping class="vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity"/>
     </session-factory>
 </hibernate-configuration>

@@ -16,6 +16,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
+        EntityManager.initialise();
         primaryStage.setOnCloseRequest(event -> EntityManager.close());
     }
 
