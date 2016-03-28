@@ -13,16 +13,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
 import vsu.sc.grishchenko.molecularclusters.database.EntityManager;
 import vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity;
+import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory3D;
 import vsu.sc.grishchenko.molecularclusters.settings.CurrentSettings;
 
-import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -40,7 +39,6 @@ public class View3D extends Application {
     final Xform cameraXform = new Xform();
     final Xform cameraXform2 = new Xform();
     final Xform cameraXform3 = new Xform();
-    public FileChooser fileChooser = new FileChooser();
     private Thread animationThread;
     private RunAnimate animation;
     public static Gson gson = new Gson();
@@ -74,9 +72,6 @@ public class View3D extends Application {
 
     public View3D(List<Trajectory> trajectories) {
         this.trajectories = trajectories;
-        fileChooser.setInitialDirectory(new File("."));
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Текстовые файлы (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
     }
 
     private void buildCamera() {
@@ -124,7 +119,9 @@ public class View3D extends Application {
 
         new LinkedHashMap<String, Consumer<Button>>() {{
             //TODO: добавить возможность ввода имени и проверку на уникальность
-            put("save", button -> button.setOnAction(e -> EntityManager.save(new TrajectoryListEntity("test", gson.toJson(trajectories)))));
+            put("save", button -> button.setOnAction(e -> {
+                EntityManager.save(new TrajectoryListEntity("test", gson.toJson(trajectories), Analyzer.getParams(trajectories)));
+            }));
             put("play", button -> button.setOnAction(e -> animation.play()));
             put("pause", button -> button.setOnAction(e -> animation.pause()));
             put("reset", button -> button.setOnAction(e -> animation.reset()));

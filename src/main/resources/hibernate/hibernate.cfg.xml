@@ -12,13 +12,13 @@
         </property>
 
         <property name="hibernate.connection.url">
-            jdbc:mysql://sql7.freesqldatabase.com:3306/sql7112479
+            jdbc:mysql://localhost:3306/molec_clust?useSSL=false
         </property>
         <property name="hibernate.connection.username">
-            sql7112479
+            admin
         </property>
         <property name="hibernate.connection.password">
-            XS18HgMgLJ
+            MC2016-G
         </property>
 
         <mapping class="vsu.sc.grishchenko.molecularclusters.entity.ExperimentEntity"/>

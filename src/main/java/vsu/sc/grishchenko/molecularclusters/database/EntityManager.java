@@ -42,13 +42,21 @@ public class EntityManager {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
+        } finally {
+            session.flush();
         }
-        session.flush();
         return result;
     }
 
     public static void save(Object entity) {
         transactional(() -> session.save(entity));
+    }
+
+    public static void update(Object entity) {
+        transactional(() -> {
+            session.update(entity);
+            return null;
+        });
     }
 
     @SuppressWarnings("unchecked")

@@ -11,7 +11,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity;
+import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
+import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
+import vsu.sc.grishchenko.molecularclusters.view.InfoDialog;
 import vsu.sc.grishchenko.molecularclusters.view.View3D;
 
 import java.net.URL;
@@ -46,9 +49,39 @@ public class TrajectoriesController implements Initializable {
 
             button = new Button("Обновить");
             buttons.getChildren().add(button);
+            button.setOnAction(event -> {
+                List<Trajectory> trajectoryList = Arrays.asList(gson.fromJson(trajectory.getJson(), Trajectory[].class));
+                AnalyzeResult result = Analyzer.getParams(trajectoryList);
+                trajectory.fillParams(result);
+
+                EntityManager.update(trajectory);
+            });
 
             button = new Button("Информация");
             buttons.getChildren().add(button);
+            button.setOnAction(event -> new InfoDialog(String.format(
+                    "Расстояние до оси трубки в начальный момент: %.3f Å\n" +
+                            "Начальный угол с осью трубки: %d°\n" +
+                            "Начальный угол с горизонтальной плоскостью XY: %d°\n" +
+                            "Длина трубки: %.3f Å\n" +
+                            "\n" +
+                            "Длина пройденного пути: %.3f Å\n" +
+                            "Длина пройденного пути / длина трубки: %.3f\n" +
+                            "\n" +
+                            "Средняя скорость: %.3f Å/τ₀\n" +
+                            "Средняя длина пробега: %.3f Å\n" +
+                            "\n" +
+                            "Коэффициент диффузии: %.3f Å²/τ₀",
+                    trajectory.getRadius(),
+                    trajectory.getFi() == null ? 0 : Math.round(trajectory.getFi()),
+                    trajectory.getTeta() == null ? 0 : Math.round(trajectory.getTeta()),
+                    trajectory.getPathLength() / trajectory.getPathLengthToTubeLength(),
+                    trajectory.getPathLength(),
+                    trajectory.getPathLengthToTubeLength(),
+                    trajectory.getAvgSpeed(),
+                    trajectory.getAvgFreePath(),
+                    trajectory.getDiffusionCoeff()
+            )).start(new Stage()));
 
             button = new Button("Запустить");
             buttons.getChildren().add(button);

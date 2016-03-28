@@ -225,145 +225,11 @@ public class MainController {
                 .appendSuffix(" с. ")
                 .toFormatter();
 
-        new InfoDialog("Эксперименты успешно проведены,\n " +
-                "результаты записаны в файлы.\n" +
+        new InfoDialog("Эксперименты успешно проведены,\n" +
+                "результаты сохранены в базу данных.\n" +
                 "Затраченное время: " + formatter.print(new Period(start, new DateTime()).normalizedStandard()))
                 .start(new Stage());
     }
-
-    /*public void exp1() {
-        String filePath = Analyzer.createExperimentDirectory(ExperimentTask1.class);
-        DateTime start = new DateTime();
-        CurrentSettings.ExperimentSettings settings = CurrentSettings.getInstance().experimentSettings;
-        Function<List<MotionEquationData>, List<Trajectory>> source
-                = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
-        startTask(new ExperimentTask1(filePath, read(), source), event -> {
-            saveExperiments(filePath, (List<List<AnalyzeResult>>) event.getSource().getValue());
-            showPeriodInfoDialog(start);
-        });
-    }
-
-    public void exp2() {
-        File file = fileChooser.showOpenDialog(container.getScene().getWindow());
-        if (file == null) return;
-
-        String filePath = Analyzer.createExperimentDirectory(ExperimentTask2.class);
-        DateTime start = new DateTime();
-        CurrentSettings.ExperimentSettings settings = CurrentSettings.getInstance().experimentSettings;
-        Function<List<MotionEquationData>, List<Trajectory>> source
-                = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
-
-        try (FileReader fileReader = new FileReader(file)) {
-            List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
-
-            startTask(new ExperimentTask2(filePath, read(), source, result), event -> {
-                saveExperiments(filePath, (List<List<AnalyzeResult>>) event.getSource().getValue());
-                showPeriodInfoDialog(start);
-            });
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void saveExperiments(String filePath, List<List<AnalyzeResult>> experiments) {
-        Stream.of(AnalyzeResult.class.getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(ImportantData.class))
-                .forEach(m -> {
-                    File out = new File(filePath + m.getName().replace("get", "") + ".txt");
-
-                    try (FileWriter writer = new FileWriter(out)) {
-                        StringBuilder builder = new StringBuilder("");
-                        for (List<AnalyzeResult> row : experiments) {
-                            for (AnalyzeResult experiment : row) {
-                                builder.append(String.format("%.2f", (Double) m.invoke(experiment)));
-                                builder.append("\t");
-                            }
-                            builder.append("\r\n");
-                        }
-                        writer.write(builder.toString());
-                    } catch (IOException | InvocationTargetException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-
-                });
-    }*/
-
-
-
-    /*public void analyzeFromFile() {
-        File file = fileChooser.showOpenDialog(container.getScene().getWindow());
-        if (file != null) {
-            try (FileReader fileReader = new FileReader(file)) {
-                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
-                AnalyzeResult analyzeResult = Analyzer.getParams(result);
-
-                new InfoDialog(String.format("Расстояние до оси трубки в начальный момент: %.3f Å\n" +
-                        "Начальный угол с осью трубки: %d°\n" +
-                        "Начальный угол с горизонтальной плоскостью XY: %d°\n" +
-                        "Длина трубки: %.3f Å\n" +
-                        "\n" +
-                        "Длина пройденного пути: %.3f Å\n" +
-                        "Длина пройденного пути / длина трубки: %.3f\n" +
-                        "\n" +
-                        "Средняя скорость: %.3f Å/τ₀\n" +
-                        "Средняя длина пробега: %.3f Å\n" +
-                        "\n" +
-                        "Коэффициент диффузии: %.3f Å²/τ₀",
-                        analyzeResult.getRadius(),
-                        Math.round(analyzeResult.getFi()),
-                        Math.round(analyzeResult.getTeta()),
-                        analyzeResult.getPathLength() / analyzeResult.getPathLengthToTubeLength(),
-                        analyzeResult.getPathLength(),
-                        analyzeResult.getPathLengthToTubeLength(),
-                        analyzeResult.getAvgSpeed(),
-                        analyzeResult.getAvgFreePath(),
-                        analyzeResult.getDiffusionCoeff()))
-                        .start(new Stage());
-
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }*/
-
-    /*public void analyzeFromFolder() {
-        directoryChooser.setInitialDirectory(new File("."));
-        File directory = directoryChooser.showDialog(container.getScene().getWindow());
-        if (directory == null) return;
-        String fileNamePattern = "%s/exp_%d.txt";
-
-        int[] i = {1};
-        Function<List<MotionEquationData>, List<Trajectory>> source = dataList -> {
-            try (FileReader fileReader = new FileReader(String.format(fileNamePattern, directory.getPath(), i[0]))) {
-                List<Trajectory> result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
-                i[0]++;
-                return result;
-            } catch(IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                return Collections.emptyList();
-            }
-        };
-
-        //for ExperimentTask2
-        List<Trajectory> solvingSystemResult = source.apply(null);
-        i[0] = 1;
-
-        ExperimentTask task = Arrays.asList(
-                new ExperimentTask1(null, null, source),
-                new ExperimentTask2(null, null, source, solvingSystemResult)
-        )
-                .stream()
-                .collect(Collectors.toMap(Function.identity(), exp -> Analyzer.experimentDictionary.get(exp.getClass())))
-                .entrySet().stream()
-                .filter(expEntry -> directory.getName().startsWith(expEntry.getValue()))
-                .findAny().get().getKey();
-
-        startTask(task, event -> {
-            saveExperiments(directory.getPath() + "/", (List<List<AnalyzeResult>>) event.getSource().getValue());
-            new InfoDialog("Параметры экспериментов\nуспешно пересчитаны").start(new Stage());
-        });
-
-    }*/
 
     public void settings() throws Exception {
         new Settings().start(new Stage());
@@ -385,7 +251,6 @@ public class MainController {
             Function<List<MotionEquationData>, List<Trajectory>> source
                     = dataList -> Solver.solveVerlet(dataList, 0, settings.getCountSteps(), settings.getStepSize());
             startTask(new ExperimentTask(read(), source, config), event -> {
-                //saveExperiments(filePath, (List<List<AnalyzeResult>>) event.getSource().getValue());
                 showPeriodInfoDialog(start);
             });
         })).start(new Stage());

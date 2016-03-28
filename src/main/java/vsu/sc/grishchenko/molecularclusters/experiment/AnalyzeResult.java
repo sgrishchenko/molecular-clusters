@@ -42,7 +42,6 @@ public class AnalyzeResult {
         this.teta = teta;
     }
 
-    @ImportantData
     public double getPathLength() {
         return pathLength;
     }
@@ -51,7 +50,6 @@ public class AnalyzeResult {
         this.pathLength = pathLength;
     }
 
-    @ImportantData
     public double getPathLengthToTubeLength() {
         return pathLengthToTubeLength;
     }
@@ -60,7 +58,6 @@ public class AnalyzeResult {
         this.pathLengthToTubeLength = pathLengthToTubeLength;
     }
 
-    @ImportantData
     public double getAvgSpeed() {
         return avgSpeed;
     }
@@ -69,7 +66,6 @@ public class AnalyzeResult {
         this.avgSpeed = avgSpeed;
     }
 
-    @ImportantData
     public double getAvgFreePath() {
         return avgFreePath;
     }
@@ -78,7 +74,6 @@ public class AnalyzeResult {
         this.avgFreePath = avgFreePath;
     }
 
-    @ImportantData
     public double getDiffusionCoeff() {
         return diffusionCoeff;
     }
@@ -87,7 +82,6 @@ public class AnalyzeResult {
         this.diffusionCoeff = diffusionCoeff;
     }
 
-    @ImportantData
     public double getFinalFi() {
         return finalFi;
     }

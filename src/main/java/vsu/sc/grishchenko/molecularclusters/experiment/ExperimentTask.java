@@ -48,7 +48,10 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
                 experimentIndex,
                 new DateTime(experimentEntity.getDate().getTime()).toString(formatter));
 
-        EntityManager.save(new TrajectoryListEntity(experimentEntity, experimentName, gson.toJson(solveResult)));
+        EntityManager.save(new TrajectoryListEntity(experimentEntity,
+                experimentName,
+                gson.toJson(solveResult),
+                Analyzer.getParams(solveResult)));
 
         if (isCancelled()) {
             updateMessage(String.format("Эксперимент прерван, выполненые расчеты - %d из %d.",
