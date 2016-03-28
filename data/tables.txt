@@ -1,3 +1,4 @@
+CREATE DATABASE molec_clust;
 CREATE TABLE experiment
 (
   id        BIGINT PRIMARY KEY AUTO_INCREMENT,
