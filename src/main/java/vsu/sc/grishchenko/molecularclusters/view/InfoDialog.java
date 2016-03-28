@@ -22,12 +22,15 @@ public class InfoDialog extends Application {
         stage.initModality(Modality.WINDOW_MODAL);
         VBox vBox = new VBox();
         vBox.getChildren().add(new Text(text));
-        Button button = new Button("Ok.");
+        Button button = new Button("OK");
+        button.setDefaultButton(true);
         button.setOnAction(e -> stage.close());
         vBox.getChildren().add(button);
         vBox.setAlignment(Pos.CENTER);
         vBox.setPadding(new Insets(5));
+        vBox.setSpacing(5);
 
+        stage.setResizable(false);
         stage.setScene(new Scene(vBox));
         stage.show();
     }

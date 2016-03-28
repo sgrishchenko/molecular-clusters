@@ -15,7 +15,7 @@ import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
-import vsu.sc.grishchenko.molecularclusters.database.EntityManager;
+import vsu.sc.grishchenko.molecularclusters.database.SaveTrajectoriesDialog;
 import vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity;
 import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory;
@@ -118,9 +118,14 @@ public class View3D extends Application {
         };
 
         new LinkedHashMap<String, Consumer<Button>>() {{
-            //TODO: добавить возможность ввода имени и проверку на уникальность
             put("save", button -> button.setOnAction(e -> {
-                EntityManager.save(new TrajectoryListEntity("test", gson.toJson(trajectories), Analyzer.getParams(trajectories)));
+                try {
+                    new SaveTrajectoriesDialog(new TrajectoryListEntity("",
+                            gson.toJson(trajectories),
+                            Analyzer.getParams(trajectories))).start(new Stage());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }));
             put("play", button -> button.setOnAction(e -> animation.play()));
             put("pause", button -> button.setOnAction(e -> animation.pause()));

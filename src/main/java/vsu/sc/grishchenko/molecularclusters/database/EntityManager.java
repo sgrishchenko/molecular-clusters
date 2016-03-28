@@ -59,6 +59,13 @@ public class EntityManager {
         });
     }
 
+    public static void saveOrUpdate(Object entity) {
+        transactional(() -> {
+            session.saveOrUpdate(entity);
+            return null;
+        });
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T find(long id, Class<T> tClass) {
         return transactional(() -> (T) session.createCriteria(tClass)
@@ -88,11 +95,11 @@ public class EntityManager {
 
     @SuppressWarnings("unchecked")
     public static <T> boolean isExists(String fieldName, Object value, Class<T> tClass) {
-        return transactional(() -> session.createCriteria(tClass)
+        return !transactional(() -> session.createCriteria(tClass)
                 .add(Restrictions.eq(fieldName, value))
                 .setProjection(Projections.id())
                 .setMaxResults(1)
-                .list() != null);
+                .list().isEmpty());
     }
 
     public static void close() {
