@@ -39,6 +39,10 @@ public class Iteration<T> {
         currentValue = from;
     }
 
+    public int getStepCount() {
+        return new Double(Math.floor((to * direction - from * direction) / step)).intValue() + 1;
+    }
+
     public String getName() {
         return name;
     }

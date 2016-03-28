@@ -13,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,8 +20,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import vsu.sc.grishchenko.molecularclusters.experiment.AnalyzeResult;
-import vsu.sc.grishchenko.molecularclusters.experiment.Analyzer;
+import vsu.sc.grishchenko.molecularclusters.database.Trajectories;
 import vsu.sc.grishchenko.molecularclusters.experiment.Experiment;
 import vsu.sc.grishchenko.molecularclusters.experiment.ExperimentTask;
 import vsu.sc.grishchenko.molecularclusters.math.MotionEquationData;
@@ -46,7 +44,6 @@ import java.util.regex.Matcher;
 public class MainController {
     public VBox container;
     public FileChooser fileChooser = new FileChooser();
-    public DirectoryChooser directoryChooser = new DirectoryChooser();
     public Gson gson = new Gson();
     public Label status;
 
@@ -134,6 +131,7 @@ public class MainController {
                       }
                   },
                 event -> {
+                    @SuppressWarnings("unchecked")
                     View3D view3D = new View3D((List<Trajectory>) event.getSource().getValue());
                     view3D.start(new Stage());
                 });
@@ -290,23 +288,9 @@ public class MainController {
                 });
     }*/
 
-    public void startFromFile() {
-        File file = fileChooser.showOpenDialog(container.getScene().getWindow());
-        if (file != null) {
-            List<Trajectory> result = new ArrayList<>();
-            try (FileReader fileReader = new FileReader(file)) {
-                 result = Arrays.asList(gson.fromJson(fileReader, Trajectory[].class));
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Stage stage = new Stage();
-            View3D view3D = new View3D(result);
-            view3D.start(stage);
-            updateTitle(stage.getScene(), file);
-        }
-    }
 
-    public void analyzeFromFile() {
+
+    /*public void analyzeFromFile() {
         File file = fileChooser.showOpenDialog(container.getScene().getWindow());
         if (file != null) {
             try (FileReader fileReader = new FileReader(file)) {
@@ -340,7 +324,7 @@ public class MainController {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
+    }*/
 
     /*public void analyzeFromFolder() {
         directoryChooser.setInitialDirectory(new File("."));
@@ -405,5 +389,9 @@ public class MainController {
                 showPeriodInfoDialog(start);
             });
         })).start(new Stage());
+    }
+
+    public void viewTrajectories() throws Exception {
+        new Trajectories().start(new Stage());
     }
 }

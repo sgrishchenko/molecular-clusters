@@ -49,16 +49,15 @@
                      <children>
                         <ToolBar orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                              <Button fx:id="add" mnemonicParsing="false" onAction="#add" prefWidth="80.0" text="Добавить" />
-                              <Button fx:id="delete" mnemonicParsing="false" onAction="#delete" prefWidth="80.0" text="Удалить" />
-                              <Button fx:id="clear" mnemonicParsing="false" onAction="#clear" prefWidth="80.0" text="Очистить" />
+                              <Button mnemonicParsing="false" onAction="#add" prefWidth="80.0" text="Добавить" />
+                              <Button mnemonicParsing="false" onAction="#delete" prefWidth="80.0" text="Удалить" />
+                              <Button mnemonicParsing="false" onAction="#clear" prefWidth="80.0" text="Очистить" />
                               <Separator prefWidth="200.0" />
-                            <Button fx:id="start" mnemonicParsing="false" onAction="#start" prefWidth="80.0" text="Запустить" />
-                            <Button fx:id="startFromFile" mnemonicParsing="false" onAction="#startFromFile" prefWidth="80.0" text="Из файла" />
+                              <Button mnemonicParsing="false" onAction="#start" prefWidth="80.0" text="Запустить" />
                               <Separator prefWidth="200.0" />
-                              <Button mnemonicParsing="false" prefWidth="80.0" text="Задание" onAction="#task"/>
-                            <Button fx:id="analyzeFromFile" mnemonicParsing="false" onAction="#analyzeFromFile" prefWidth="80.0" text="Из файла" />
-                            <!--<Button fx:id="analyzeFromFolder" mnemonicParsing="false" onAction="#analyzeFromFolder" prefWidth="80.0" text="Из папки" />-->
+                              <Button mnemonicParsing="false" onAction="#task" prefWidth="80.0" text="Задание" />
+                              <Separator prefWidth="200.0" />
+                              <Button mnemonicParsing="false" onAction="#viewTrajectories" prefWidth="80.0" text="База" />
                           </items>
                         </ToolBar>
                      </children>

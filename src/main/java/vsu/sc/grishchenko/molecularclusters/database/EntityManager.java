@@ -73,6 +73,12 @@ public class EntityManager {
     }
 
     @SuppressWarnings("unchecked")
+    public static <T> List<T> findAll(Class<T> tClass) {
+        return transactional(() -> (List<T>) session.createCriteria(tClass)
+                .list());
+    }
+
+    @SuppressWarnings("unchecked")
     public static <T> boolean isExists(String fieldName, Object value, Class<T> tClass) {
         return transactional(() -> session.createCriteria(tClass)
                 .add(Restrictions.eq(fieldName, value))

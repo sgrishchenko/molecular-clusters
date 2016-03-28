@@ -38,7 +38,8 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
     }
 
     protected List<Trajectory> solve() {
-        updateMessage(String.format("Выплняется расчет № %d...", experimentIndex));
+        updateMessage(String.format("Выплняется расчет № %d из %d...",
+                experimentIndex, experimentLength));
 
 
         List<Trajectory> solveResult = source.apply(dataList);
@@ -98,11 +99,7 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
         variableEquation.setInitialPosition(config.getInitialPosition());
         variableEquation.setInitialVelocity(config.getInitialVelocity());
 
-        //TODO: делегировать расчет iteration, сейчас не правильно считается
-        experimentLength = config.getIterations()
-                .stream()
-                .mapToInt(i -> new Double(Math.floor((i.getTo() - i.getFrom()) / i.getStep())).intValue() + 1)
-                .sum();
+        experimentLength = config.getIterations().stream().mapToInt(Iteration::getStepCount).sum();
 
         iterationsHandle(variableEquation, config.getIterations(), results);
 
