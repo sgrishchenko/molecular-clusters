@@ -48,7 +48,7 @@ public class RunAnimate implements Runnable {
 
             Text text = new Text(t.getLabel());
             text.setFont(new Font(12));
-            text.setFill(Color.LIME);
+            text.setFill(Color.BLACK);
             text.setTranslateX(point.getX() * scale + RADIUS);
             text.setTranslateY(point.getY() * scale + RADIUS);
             text.setTranslateZ(point.getZ() * scale + RADIUS);
