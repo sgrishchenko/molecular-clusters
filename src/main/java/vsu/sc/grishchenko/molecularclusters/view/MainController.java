@@ -51,7 +51,7 @@ public class MainController {
 
     public MainController() {
         fileChooser.setInitialDirectory(new File("."));
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Текстовые файлы (*.txt)", "*.txt");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Файлы в формате JSON (*.json)", "*.json");
         fileChooser.getExtensionFilters().add(extFilter);
     }
 

@@ -1,1 +1,0 @@
-{"radius":4.473,"angle":27.0,"pathLength":10.952191609835277,"pathLengthToTubeLength":1.1124648130077364,"avgSpeed":75.01501102626897,"avgFreePath":10.952191609835277,"diffusionCoeff":136.92979572893395}

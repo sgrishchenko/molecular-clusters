@@ -21,8 +21,8 @@ public class Converter {
                 String[] buffer = s.split(" ");
                 data.add(new MotionEquationData("r", "0",
                         ArrayUtils.<Double>toArray(Double.parseDouble(buffer[1]),
-                                Double.parseDouble(buffer[2]),
-                                Double.parseDouble(buffer[3])),
+                                Double.parseDouble(buffer[3]),
+                                Double.parseDouble(buffer[2])),
                         ArrayUtils.<Double>toArray(0., 0., 0.), new Color(0.6, 0, 0, 1)));
             });
         }
@@ -41,7 +41,7 @@ public class Converter {
                     sortedData.add(eq);
                 });
 
-        File out = new File("my_" + in.getName());
+        File out = new File(in.getName().replaceAll("\\..+$", ".json"));
         try (FileWriter writer = new FileWriter(out)) {
             writer.write(gson.toJson(sortedData));
         }

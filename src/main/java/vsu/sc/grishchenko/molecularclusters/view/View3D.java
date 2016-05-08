@@ -43,7 +43,7 @@ public class View3D extends Application {
     private RunAnimate animation;
     public static Gson gson = new Gson();
     private static final double CAMERA_INITIAL_DISTANCE = -450;
-    private static final double CAMERA_INITIAL_X_ANGLE = 60.0;
+    private static final double CAMERA_INITIAL_X_ANGLE = 30.0;
     private static final double CAMERA_INITIAL_Y_ANGLE = 320.0;
     private static final double CAMERA_NEAR_CLIP = 0.1;
     private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -257,6 +257,15 @@ public class View3D extends Application {
                 case Z:
                     cameraXform2.t.setX(0.0);
                     cameraXform2.t.setY(0.0);
+
+                    world.lookupAll("Text").forEach(node -> {
+                        Rotate ry = (Rotate) node.getTransforms().get(1);
+                        Rotate rx = (Rotate) node.getTransforms().get(2);
+
+                        ry.setAngle(-CAMERA_INITIAL_Y_ANGLE);
+                        rx.setAngle(-CAMERA_INITIAL_X_ANGLE);
+                    });
+
                     cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
                     cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
                     break;
@@ -265,6 +274,9 @@ public class View3D extends Application {
                     break;
                 case V:
                     moleculeGroup.setVisible(!moleculeGroup.isVisible());
+                    break;
+                case C:
+                    world.lookupAll("Text").forEach(node -> node.setVisible(!node.isVisible()));
                     break;
             } // switch
         });  // setOnKeyPressed

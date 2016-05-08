@@ -18,7 +18,7 @@
             admin
         </property>
         <property name="hibernate.connection.password">
-            MC2016-G
+            admin
         </property>
 
         <mapping class="vsu.sc.grishchenko.molecularclusters.entity.ExperimentEntity"/>

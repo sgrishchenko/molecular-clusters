@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 public class ExperimentController implements Initializable {
     public ChoiceBox<String> template;
 
-    public TextField H1;
-    public TextField H2;
-
     public TextField label;
 
     public CheckBox changeX; public Label labelXfrom; public TextField Xfrom; public TextField Xto; public TextField Xstep;
@@ -71,9 +68,10 @@ public class ExperimentController implements Initializable {
 
     private Double[] toSpherical(Double[] cartesian) {
         Double r = Math.sqrt(Math.pow(cartesian[0], 2) + Math.pow(cartesian[1], 2) + Math.pow(cartesian[2], 2));
+        if (r.equals(0.0)) return new Double[]{0., 0., 0.};
         return new Double[]{
                 r,
-                Math.toDegrees(Math.atan(cartesian[1] / cartesian[0])),
+                cartesian[0].equals(0.0) ? 0.0 : Math.toDegrees(Math.atan(cartesian[1] / cartesian[0])),
                 Math.toDegrees(Math.acos(cartesian[2] / r))
         };
     }
@@ -86,7 +84,7 @@ public class ExperimentController implements Initializable {
 
         velocityDimensions.add(new Dimension("VX", changeV, labelVfrom, Vfrom, Vto, Vstep, getVAction(MotionEquationData::getInitialVelocity, 0)));
         velocityDimensions.add(new Dimension("VY", changeT, labelTfrom, Tfrom, Tto, Tstep, getVAction(MotionEquationData::getInitialVelocity, 1)));
-        velocityDimensions.add(new Dimension("VY", changeF, labelFfrom, Ffrom, Fto, Fstep, getVAction(MotionEquationData::getInitialVelocity, 2)));
+        velocityDimensions.add(new Dimension("VZ", changeF, labelFfrom, Ffrom, Fto, Fstep, getVAction(MotionEquationData::getInitialVelocity, 2)));
 
         allDimensions.addAll(positionDimensions);
         allDimensions.addAll(velocityDimensions);
@@ -113,21 +111,21 @@ public class ExperimentController implements Initializable {
             ));
         }});
         templates.put("Сдвиг вдоль оси X + изменение горизонтального угла", new ExperimentConfig() {{
-            setInitialPosition(new Double[] {0., -3., 0.});
-            setInitialVelocity(new Double[] {75., 90., 90.});
+            setInitialPosition(new Double[] {0., 0., -3.});
+            setInitialVelocity(new Double[] {75., 0., 0.});
 
             setIterations(Arrays.asList(
-                    new Iteration<>("X", 0, -2, 0.5, positionDimensions.get(0).getAction()),
+                    new Iteration<>("X", 0, -2, 0.25, positionDimensions.get(0).getAction()),
                     emptyIteration,
                     emptyIteration,
                     emptyIteration,
-                    new Iteration<>("VY", 90, 0, 10, velocityDimensions.get(1).getAction()),
-                    emptyIteration
+                    emptyIteration,
+                    new Iteration<>("VZ", 0, 90, 10, velocityDimensions.get(2).getAction())
             ));
         }});
         templates.put("Изменение вертикального угла для фиксированного горизонтального угла", new ExperimentConfig() {{
-            setInitialPosition(new Double[] {0., -3., 0.});
-            setInitialVelocity(new Double[] {75., 45., 90.});
+            setInitialPosition(new Double[] {0., 0., -3.});
+            setInitialVelocity(new Double[] {75., 90., 45.});
 
             setIterations(Arrays.asList(
                     emptyIteration,

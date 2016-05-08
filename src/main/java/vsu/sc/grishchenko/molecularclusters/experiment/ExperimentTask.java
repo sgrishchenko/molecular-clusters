@@ -73,8 +73,12 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
             iteration.handle(variableEquation);
 
             if (lastIteration) {
-                results.add(getParams(solve()));
-                experimentIndex++;
+                try {
+                    results.add(getParams(solve()));
+                    experimentIndex++;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
                 iterationsHandle(variableEquation, iterations.subList(1, iterations.size()), results);
             }
@@ -102,7 +106,10 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
         variableEquation.setInitialPosition(config.getInitialPosition());
         variableEquation.setInitialVelocity(config.getInitialVelocity());
 
-        experimentLength = config.getIterations().stream().mapToInt(Iteration::getStepCount).sum();
+        experimentLength = config.getIterations()
+                .stream()
+                .mapToInt(Iteration::getStepCount)
+                .reduce((i1, i2) -> i1 * i2).getAsInt();
 
         iterationsHandle(variableEquation, config.getIterations(), results);
 
