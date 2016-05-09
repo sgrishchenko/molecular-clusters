@@ -16,6 +16,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.toCartesian;
+import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.toSpherical;
+
 public class ExperimentController implements Initializable {
     public ChoiceBox<String> template;
 
@@ -55,24 +58,6 @@ public class ExperimentController implements Initializable {
             for (int i = 0; i < 3; i++) {
                 getter.apply(data)[i] = cartesian[i];
             }
-        };
-    }
-
-    private Double[] toCartesian(Double[] spherical) {
-        return new Double[] {
-                spherical[0] * Math.sin(Math.toRadians(spherical[2])) * Math.cos(Math.toRadians(spherical[1])),
-                spherical[0] * Math.sin(Math.toRadians(spherical[2])) * Math.sin(Math.toRadians(spherical[1])),
-                spherical[0] * Math.cos(Math.toRadians(spherical[2]))
-        };
-    }
-
-    private Double[] toSpherical(Double[] cartesian) {
-        Double r = Math.sqrt(Math.pow(cartesian[0], 2) + Math.pow(cartesian[1], 2) + Math.pow(cartesian[2], 2));
-        if (r.equals(0.0)) return new Double[]{0., 0., 0.};
-        return new Double[]{
-                r,
-                cartesian[0].equals(0.0) ? 0.0 : Math.toDegrees(Math.atan(cartesian[1] / cartesian[0])),
-                Math.toDegrees(Math.acos(cartesian[2] / r))
         };
     }
 

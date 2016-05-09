@@ -169,7 +169,7 @@
                   <Insets />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="changeT" mnemonicParsing="false" text="Изменение горизонтального угла вектора скорости:" wrapText="true" GridPane.rowIndex="8">
+            <CheckBox fx:id="changeT" mnemonicParsing="false" text="Изменение азимутального угла вектора скорости:" wrapText="true" GridPane.rowIndex="8">
                <padding>
                   <Insets left="5.0" />
                </padding>
@@ -177,7 +177,7 @@
                   <Insets />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="changeF" mnemonicParsing="false" text="Изменение вкртикального угла вектора скорости:" wrapText="true" GridPane.rowIndex="9">
+            <CheckBox fx:id="changeF" mnemonicParsing="false" text="Изменение зенитного угла вектора скорости:" wrapText="true" GridPane.rowIndex="9">
                <padding>
                   <Insets left="5.0" />
                </padding>
@@ -211,7 +211,7 @@
             </HBox>
             <HBox spacing="5.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
                <children>
-                  <Label prefWidth="300.0" text="Начальная скорость перемещаемой точки (модуль вектора, горизонтальный и вертикальный углы):" wrapText="true" GridPane.rowIndex="2">
+                  <Label prefWidth="300.0" text="Начальная скорость перемещаемой точки (модуль вектора, азимутальный и зенитный углы):" wrapText="true" GridPane.rowIndex="2">
                      <HBox.margin>
                         <Insets left="5.0" />
                      </HBox.margin>

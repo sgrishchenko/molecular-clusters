@@ -50,6 +50,7 @@ CREATE TABLE trajectory_list
   avg_free_path              DOUBLE,
   diffusion_coeff            DOUBLE,
   final_fi                   DOUBLE,
+  final_teta                 DOUBLE,
   FOREIGN KEY (experiment_id) REFERENCES experiment (id)
     ON DELETE SET NULL
     ON UPDATE CASCADE

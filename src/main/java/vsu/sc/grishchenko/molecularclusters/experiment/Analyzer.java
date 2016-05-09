@@ -32,16 +32,16 @@ public final class Analyzer {
 
         Double initRadius = Math.sqrt(
                 Math.pow(resultMap.get(xMovingPoint).getPath().get(0), 2) +
-                Math.pow(resultMap.get(zMovingPoint).getPath().get(0), 2)
+                Math.pow(resultMap.get(yMovingPoint).getPath().get(0), 2)
         );
 
         AnalyzeResult result = new AnalyzeResult(
                 initRadius,
-                getAngleWithTubeAxis(xMovingPoint, yMovingPoint, zMovingPoint, 0, resultMap),
-                Math.toDegrees(Math.acos(resultMap.get(zMovingPoint).getPath().get(0) / initRadius))
+                getFi(xMovingPoint, yMovingPoint, 0, resultMap),
+                getTeta(xMovingPoint, yMovingPoint, zMovingPoint, 0, resultMap)
         );
 
-        if (resultMap.get(yMovingPoint).getPath()
+        if (resultMap.get(zMovingPoint).getPath()
                 .stream()
                 .noneMatch(p -> p > length)) return result;
 
@@ -57,8 +57,8 @@ public final class Analyzer {
 
         for (int i = 0; i < countSteps - 1; i++) {
 
-            if (resultMap.get(yMovingPoint).getPath().get(i) > 0
-                    && resultMap.get(yMovingPoint).getPath().get(i) < length) {
+            if (resultMap.get(zMovingPoint).getPath().get(i) > 0
+                    && resultMap.get(zMovingPoint).getPath().get(i) < length) {
 
                 final int fI = i;
                 r = Math.sqrt(movingPoints
@@ -75,24 +75,25 @@ public final class Analyzer {
                 if ((i > 1 && ((dx && !pdx && !pdy && !pdz)
                         || (dy && !pdx && !pdy && !pdz)
                         || (dz && !pdx && !pdy && !pdz)))
-                        || resultMap.get(yMovingPoint).getPath().get(i + 1) > length) {
+                        || resultMap.get(zMovingPoint).getPath().get(i + 1) > length) {
 
                     L.add(l);
                     l = 0;
-                    System.out.print("change v ");
+                    //System.out.print("change v ");
                 }
                 pdx = dx;
                 pdy = dy;
                 pdz = dz;
                 time += CurrentSettings.getInstance().getStepSize();
                 S += r;
-                System.out.println(r);
+                //System.out.println(r);
             }
 
-            if (resultMap.get(yMovingPoint).getPath().get(i) > length
-                    && resultMap.get(yMovingPoint).getPath().get(i - 1) < length) {
+            if (resultMap.get(zMovingPoint).getPath().get(i) > length
+                    && resultMap.get(zMovingPoint).getPath().get(i - 1) < length) {
 
-                result.setFinalFi(getAngleWithTubeAxis(xMovingPoint, yMovingPoint, zMovingPoint, i - 1, resultMap));
+                result.setFinalFi(getFi(xMovingPoint, yMovingPoint, i - 1, resultMap));
+                result.setFinalTeta(getTeta(xMovingPoint, yMovingPoint, zMovingPoint, i - 1, resultMap));
             }
         }
 
@@ -115,16 +116,25 @@ public final class Analyzer {
         return Math.signum(difference1) != Math.signum(difference2);
     }
 
-    private static double getAngleWithTubeAxis(String xLabel, String yLabel, String zLabel,
-                                               int index, Map<String, Trajectory> solvingSystemResult) {
+    private static double getFi(String xLabel, String yLabel,
+                                int index, Map<String, Trajectory> solvingSystemResult) {
 
-        Double rx = Math.abs(solvingSystemResult.get(xLabel).getPath().get(index + 1) - solvingSystemResult.get(xLabel).getPath().get(index));
-        Double ry = Math.abs(solvingSystemResult.get(yLabel).getPath().get(index + 1) - solvingSystemResult.get(yLabel).getPath().get(index));
-        Double rz = Math.abs(solvingSystemResult.get(zLabel).getPath().get(index + 1) - solvingSystemResult.get(zLabel).getPath().get(index));
+        return Math.toDegrees(Math.atan((
+                solvingSystemResult.get(yLabel).getPath().get(index + 1) - solvingSystemResult.get(yLabel).getPath().get(index))
+                / (solvingSystemResult.get(xLabel).getPath().get(index + 1) - solvingSystemResult.get(xLabel).getPath().get(index))
+        ));
+    }
 
-        Double initShift = Math.sqrt(rx * rx + ry * ry + rz * rz);
+    private static double getTeta(String xLabel, String yLabel, String zLabel,
+                                int index, Map<String, Trajectory> solvingSystemResult) {
 
-        return Math.toDegrees(Math.acos(ry / initShift));
+        Double radius = Math.sqrt(
+                Math.pow(solvingSystemResult.get(xLabel).getPath().get(index + 1) - solvingSystemResult.get(xLabel).getPath().get(index), 2) +
+                Math.pow(solvingSystemResult.get(yLabel).getPath().get(index + 1) - solvingSystemResult.get(yLabel).getPath().get(index), 2) +
+                Math.pow(solvingSystemResult.get(zLabel).getPath().get(index + 1) - solvingSystemResult.get(zLabel).getPath().get(index), 2)
+        );
+
+        return Math.toDegrees(Math.acos((solvingSystemResult.get(zLabel).getPath().get(index + 1) - solvingSystemResult.get(zLabel).getPath().get(index))/ radius));
     }
 
     protected static Double getTubeRadius(Integer m, Integer n) {
@@ -152,7 +162,7 @@ public final class Analyzer {
     private static Double getTubeLength(List<Trajectory> tubeOnly) {
 
         double[] yPoints = tubeOnly.stream()
-                .filter(t -> t.getLabel().startsWith("y"))
+                .filter(t -> t.getLabel().startsWith("z"))
                 .mapToDouble(t -> t.getPath().get(0))
                 .toArray();
 
@@ -168,4 +178,25 @@ public final class Analyzer {
                 .collect(Collectors.toList()));
         return movingPoints;
     }
+
+
+
+    public static Double[] toCartesian(Double[] spherical) {
+        return new Double[] {
+                spherical[0] * Math.sin(Math.toRadians(spherical[2])) * Math.cos(Math.toRadians(spherical[1])),
+                spherical[0] * Math.sin(Math.toRadians(spherical[2])) * Math.sin(Math.toRadians(spherical[1])),
+                spherical[0] * Math.cos(Math.toRadians(spherical[2]))
+        };
+    }
+
+    public static Double[] toSpherical(Double[] cartesian) {
+        Double r = Math.sqrt(Math.pow(cartesian[0], 2) + Math.pow(cartesian[1], 2) + Math.pow(cartesian[2], 2));
+        if (r.equals(0.0)) return new Double[]{0., 0., 0.};
+        return new Double[]{
+                r,
+                cartesian[0].equals(0.0) ? 0.0 : Math.toDegrees(Math.atan(cartesian[1] / cartesian[0])),
+                Math.toDegrees(Math.acos(cartesian[2] / r))
+        };
+    }
+
 }

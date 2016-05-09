@@ -21,6 +21,7 @@ public class TrajectoryListEntity {
     private Double avgFreePath;
     private Double diffusionCoeff;
     private Double finalFi;
+    private Double finalTeta;
 
     public TrajectoryListEntity() {
     }
@@ -45,7 +46,8 @@ public class TrajectoryListEntity {
         if (!Double.isNaN(result.getAvgSpeed())) this.avgSpeed = result.getAvgSpeed();
         if (!Double.isNaN(result.getAvgFreePath())) this.avgFreePath = result.getAvgFreePath();
         if (!Double.isNaN(result.getDiffusionCoeff())) this.diffusionCoeff = result.getDiffusionCoeff();
-        if (!Double.isNaN(result.getFi())) this.finalFi = result.getFi();
+        if (!Double.isNaN(result.getFinalFi())) this.finalFi = result.getFinalFi();
+        if (!Double.isNaN(result.getFinalTeta())) this.finalTeta = result.getFinalTeta();
     }
 
     @Id
@@ -199,5 +201,15 @@ public class TrajectoryListEntity {
 
     public void setFinalFi(Double finalFi) {
         this.finalFi = finalFi;
+    }
+
+    @Basic
+    @Column(name = "final_teta")
+    public Double getFinalTeta() {
+        return finalTeta;
+    }
+
+    public void setFinalTeta(Double finalTeta) {
+        this.finalTeta = finalTeta;
     }
 }

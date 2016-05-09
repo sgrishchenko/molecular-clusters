@@ -61,8 +61,8 @@ public class TrajectoriesController implements Initializable {
             buttons.getChildren().add(button);
             button.setOnAction(event -> new InfoDialog(String.format(
                     "Расстояние до оси трубки в начальный момент: %.3f Å\n" +
-                            "Начальный угол с осью трубки: %d°\n" +
-                            "Начальный угол с горизонтальной плоскостью XY: %d°\n" +
+                            "Начальный зенитный угол: %d°\n" +
+                            "Начальный азимутальный угол: %d°\n" +
                             "Длина трубки: %.3f Å\n" +
                             "\n" +
                             "Длина пройденного пути: %.3f Å\n" +
@@ -73,8 +73,8 @@ public class TrajectoriesController implements Initializable {
                             "\n" +
                             "Коэффициент диффузии: %.3f Å²/τ₀",
                     trajectory.getRadius(),
-                    trajectory.getFi() == null ? 0 : Math.round(trajectory.getFi()),
                     trajectory.getTeta() == null ? 0 : Math.round(trajectory.getTeta()),
+                    trajectory.getFi() == null ? 0 : Math.round(trajectory.getFi()),
                     trajectory.getPathLength() / trajectory.getPathLengthToTubeLength(),
                     trajectory.getPathLength(),
                     trajectory.getPathLengthToTubeLength(),

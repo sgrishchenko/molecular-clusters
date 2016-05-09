@@ -11,6 +11,7 @@ public class AnalyzeResult {
     double avgFreePath;
     double diffusionCoeff;
     double finalFi;
+    double finalTeta;
 
     public AnalyzeResult(double radius, double fi, double teta) {
         this.radius = radius;
@@ -88,5 +89,13 @@ public class AnalyzeResult {
 
     public void setFinalFi(double finalFi) {
         this.finalFi = finalFi;
+    }
+
+    public double getFinalTeta() {
+        return finalTeta;
+    }
+
+    public void setFinalTeta(double finalTeta) {
+        this.finalTeta = finalTeta;
     }
 }
