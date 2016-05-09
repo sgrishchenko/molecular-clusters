@@ -294,7 +294,7 @@ public class View3D extends Application {
         handleKeyboard(scene, world);
         handleMouse(scene, world);
 
-        primaryStage.setTitle("Molecular Clusters");
+        primaryStage.setTitle("Трехмерная анимированная модель");
         primaryStage.setScene(scene);
 
         scene.setCamera(camera);
