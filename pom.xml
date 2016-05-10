@@ -87,8 +87,8 @@
                             <versionInfo>
                                 <fileVersion>${rootVersion}.0.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
-                                <fileDescription>Программа для блокировки счетов в соответствии со списком</fileDescription>
-                                <copyright>Copyright © 2011 grishchenko</copyright>
+                                <fileDescription>Программа для моделирования молекулярных кластеров</fileDescription>
+                                <copyright>Copyright © 2016 grishchenko</copyright>
                                 <productVersion>${rootVersion}.0.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <companyName>grishchenko</companyName>
