@@ -95,7 +95,7 @@ public class ExperimentController implements Initializable {
                     emptyIteration
             ));
         }});
-        templates.put("Сдвиг вдоль оси X + изменение горизонтального угла", new ExperimentConfig() {{
+        templates.put("Сдвиг вдоль оси X + изменение зенитного угла", new ExperimentConfig() {{
             setInitialPosition(new Double[] {0., 0., -3.});
             setInitialVelocity(new Double[] {75., 0., 0.});
 
@@ -108,17 +108,17 @@ public class ExperimentController implements Initializable {
                     new Iteration<>("VZ", 0, 90, 10, velocityDimensions.get(2).getAction())
             ));
         }});
-        templates.put("Изменение вертикального угла для фиксированного горизонтального угла", new ExperimentConfig() {{
+        templates.put("Изменение азимутального угла", new ExperimentConfig() {{
             setInitialPosition(new Double[] {0., 0., -3.});
-            setInitialVelocity(new Double[] {75., 90., 45.});
+            setInitialVelocity(new Double[] {75., 0., 30.});
 
             setIterations(Arrays.asList(
                     emptyIteration,
                     emptyIteration,
                     emptyIteration,
                     emptyIteration,
-                    emptyIteration,
-                    new Iteration<>("VZ", 90, 0, 10, velocityDimensions.get(2).getAction())
+                    new Iteration<>("VY", 0, 90, 10, velocityDimensions.get(1).getAction()),
+                    emptyIteration
             ));
         }});
         template.setItems(FXCollections.observableArrayList(templates.keySet()));
