@@ -1,6 +1,5 @@
 package vsu.sc.grishchenko.molecularclusters.math;
 
-import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 import java.util.*;
@@ -8,112 +7,6 @@ import java.util.stream.Collectors;
 
 public final class Solver {
     private final static String separatorGroup= "(\\s|\\+|\\-|\\*|/|\\(|\\))";
-
-    public static Map<String, List<Double>> solveSystem(List<DifferentialEquation> equations,
-                                                        SolveMethod method,
-                                                        Double initialCondition,
-                                                        Integer countSteps,
-                                                        Double stepSize) {
-
-        ExpressionBuilder builder;
-        Double newValue;
-        List<Double> resultFunction;
-
-        //init function lefts and result
-        Map<String, List<Double>> result = new HashMap<>(equations.size());
-        for (DifferentialEquation equation : equations) {
-            builder = new ExpressionBuilder(equation.getLhsFunction());
-            builder.variable("x");
-            builder.variables((Set<String>) equations.stream().map(e -> e.getLabel()).collect(Collectors.toCollection(HashSet::new)));
-            equation.setLhsFunctionExpression(builder.build());
-
-            resultFunction = new ArrayList<>(countSteps);
-            resultFunction.add(equation.getInitialCondition());
-            result.put(equation.getLabel(), resultFunction);
-        }
-
-        List<List<Double>> k = new ArrayList<>(4);
-        if (SolveMethod.RUNGE_KUTTA_4.equals(method)) {
-            //init coefficients
-            for (int i = 0; i < 4; i++) {
-                k.add(new ArrayList<>(equations.size()));
-                for (DifferentialEquation equation : equations)
-                    k.get(i).add(equation.getInitialCondition());
-            }
-        }
-
-        //body
-        for (int i = 1; i < countSteps; i++, initialCondition += stepSize) {
-            switch (method) {
-                case EULER:
-                    for (DifferentialEquation equation : equations) {
-                        equation.setLhsValue(equation
-                                .getLhsFunctionExpression()
-                                .setVariables(equations.stream().collect(Collectors.toMap(e -> e.getLabel(), e -> e.getInitialCondition())))
-                                .setVariable("x", initialCondition)
-                                .evaluate());
-                    }
-                    for (DifferentialEquation equation : equations) {
-                        newValue = equation.getInitialCondition() + stepSize * equation.getLhsValue();
-
-                        result.get(equation.getLabel()).add(newValue);
-                        equation.setInitialCondition(newValue);
-                    }
-                    break;
-                case RUNGE_KUTTA_4:
-                    //k1
-                    evoluteCoeff(result, null, k.get(0),
-                            equations.stream().map(e -> e.getLhsFunctionExpression()).collect(Collectors.toList()),
-                            initialCondition, stepSize, 1, i, equations.size());
-                    //k2
-                    evoluteCoeff(result, k.get(0), k.get(1),
-                            equations.stream().map(e -> e.getLhsFunctionExpression()).collect(Collectors.toList()),
-                            initialCondition, stepSize, 2, i, equations.size());
-                    //k3
-                    evoluteCoeff(result, k.get(1), k.get(2),
-                            equations.stream().map(e -> e.getLhsFunctionExpression()).collect(Collectors.toList()),
-                            initialCondition, stepSize, 2, i, equations.size());
-                    //k4
-                    evoluteCoeff(result, k.get(2), k.get(3),
-                            equations.stream().map(e -> e.getLhsFunctionExpression()).collect(Collectors.toList()),
-                            initialCondition, stepSize, 1, i, equations.size());
-
-                    for (int j = 0; j < equations.size(); j++) {
-                        String variableName = "y" + (j + 1);
-                        result.get(variableName).add(result.get(variableName).get(i - 1)
-                                + (k.get(0).get(j) + 2 * k.get(1).get(j) + 2 * k.get(2).get(j) + k.get(3).get(j)) / 6);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return result;
-    }
-
-    private static void evoluteCoeff(Map<String, List<Double>> result,
-                                     List<Double> baseCoeff,
-                                     List<Double> coeff,
-                                     List<Expression> expressions,
-                                     Double x,
-                                     Double h,
-                                     Integer denom,
-                                     Integer index,
-                                     Integer size) {
-        Expression tmp;
-        for (int j = 0; j < size; j++) {
-            tmp = expressions.get(j);
-            tmp.setVariable("x", x);
-            for (int l = 0; l < size; l++) {
-                String variableName = "y" + (l + 1);
-                tmp.setVariable(variableName,
-                        result.get(variableName).get(index - 1)
-                                + (baseCoeff == null ? 0 : baseCoeff.get(l) / denom));
-            }
-            coeff.set(j, h * tmp.evaluate());
-        }
-    }
 
     private static MotionEquation getMotionEquation(MotionEquationData data,
                                                     int projection,
