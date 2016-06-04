@@ -7,6 +7,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 
+/**
+ * <p>Класс, который позволяет запускать диаоговое окно с настройками приложения.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Application
+ */
 public class Settings extends Application {
     @Override
     public void start(Stage stage) throws Exception {

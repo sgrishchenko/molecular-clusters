@@ -9,12 +9,48 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * <p>Класс-контроллер для обработки событий, происходящих на форме в диалоговом окне настроек приложения.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Settings
+ * @see Initializable
+ */
 public class SettingsController implements Initializable {
+    /**
+     * <p>Основной контейнер диалового окна.</p>
+     *
+     * @see AnchorPane
+     */
     public AnchorPane root;
+    /**
+     * <p>Поле ввода количества шагов при выполнеии алгоритма численного интергирования.</p>
+     *
+     * @see CurrentSettings#countSteps
+     * @see TextField
+     */
     public TextField viewCountSteps;
+    /**
+     * <p>Поле ввода величина сдвига по времени при выполнеии алгоритма численного интергирования.</p>
+     *
+     * @see CurrentSettings#stepSize
+     * @see TextField
+     */
     public TextField viewStepSize;
+    /**
+     * <p>Ползунок для задания время между шагами анимации при демонстрации трехмерной анимированной модели.</p>
+     *
+     * @see CurrentSettings#animateStepSize
+     * @see TextField
+     */
     public Slider animateStepSize;
 
+    /**
+     * <p>Инициализация формы диалогового окна на основе текущих значений в объекте,
+     * полученном с помощью метода {@link CurrentSettings#getInstance()}</p>
+     *
+     * @see CurrentSettings
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CurrentSettings currentSettings = CurrentSettings.getInstance();
@@ -26,6 +62,10 @@ public class SettingsController implements Initializable {
         animateStepSize.setValue(timeStep);
     }
 
+    /**
+     * <p>Обработчик события при нажатии на кнопку "OK" в диалоговом окне.
+     * Сохраняет данные, введенные на форме диалогового окна, как текущие настройки.</p>
+     */
     public void setSettings() {
         CurrentSettings currentSettings = CurrentSettings.getInstance();
 
@@ -38,6 +78,10 @@ public class SettingsController implements Initializable {
         cancelSettings();
     }
 
+    /**
+     * <p>Обработчик события при нажатии на кнопку "Отмена" в диалоговом окне.
+     * Закрывает диалоговое окно.</p>
+     */
     public void cancelSettings() {
         ((Stage) root.getScene().getWindow()).close();
     }

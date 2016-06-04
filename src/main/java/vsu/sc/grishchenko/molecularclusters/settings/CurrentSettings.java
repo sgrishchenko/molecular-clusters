@@ -1,10 +1,29 @@
 package vsu.sc.grishchenko.molecularclusters.settings;
 
+import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
+
+/**
+ * <p>Класс, написанный с ипользованием шаблона проектировани "Одиночка"
+ * и хранящий текущие настройки приложения.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class CurrentSettings {
     private static CurrentSettings ourInstance = new CurrentSettings();
 
+    /**
+     * <p>Количество шагов при выполнеии алгоритма численного интергирования.</p>
+     */
     private Integer countSteps = 1000;
+    /**
+     * <p>Величина сдвига по времени при выполнеии алгоритма численного интергирования.</p>
+     */
     private Double stepSize = 0.001;
+    /**
+     * <p>Время в миллисекундах между шагами анимации при демонстрации трехмерной анимированной модели.</p>
+     *
+     * @see RunAnimate#timeStep
+     */
     private Integer animateStepSize = 15;
 
     public static CurrentSettings getInstance() {

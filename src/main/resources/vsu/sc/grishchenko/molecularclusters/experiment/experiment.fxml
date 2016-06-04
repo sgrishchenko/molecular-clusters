@@ -221,18 +221,6 @@
                   <TextField fx:id="Ffrom" prefWidth="40.0" />
                </children>
             </HBox>
-            <!--<HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
-               <children>
-                  <Label text="Оценка параметров нанотрубки с хиральностью:">
-                     <padding>
-                        <Insets left="5.0" />
-                     </padding>
-                  </Label>
-                  <TextField fx:id="H1" prefWidth="40.0" />
-                  <Label text="Х" />
-                  <TextField fx:id="H2" prefWidth="40.0" />
-               </children>
-            </HBox>-->
             <Label fx:id="labelXfrom" GridPane.columnIndex="2" GridPane.rowIndex="4" />
             <Label fx:id="labelYfrom" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <Label fx:id="labelZfrom" GridPane.columnIndex="2" GridPane.rowIndex="6" />
