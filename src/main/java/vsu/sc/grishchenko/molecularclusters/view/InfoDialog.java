@@ -10,9 +10,20 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * <p>Класс, который позволяет запускать из любого места в приложении
+ * простые диаоговые окна с информацией.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Application
+ */
 public class InfoDialog extends Application {
     private String text;
 
+
+    /**
+     * @param text текст сообщения, который будет отображен в диалоговом окне.
+     */
     public InfoDialog(String text) {
         this.text = text;
     }

@@ -8,6 +8,16 @@ import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.database.EntityManager;
 import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 
+
+/**
+ * <p>Основной класс приложения, который инициирует его запуск.
+ * <p>При вызове метода {@link #start} инициализируется соединение с базой данных.
+ * При закрытии приложения соединение автоматически закрывается.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Application
+ * @see EntityManager
+ */
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {

@@ -2,10 +2,8 @@ package vsu.sc.grishchenko.molecularclusters.view;
 
 import com.google.gson.Gson;
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
+import javafx.event.EventHandler;
+import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,51 +27,180 @@ import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
+/**
+ * <p>Класс для отображения трехмерной анимированной визуализации.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Application
+ */
 public class View3D extends Application {
-
+    /**
+     * <p>Корневой объект для создания всех элементов формы визуализации</p>
+     *
+     * @see Group
+     */
     final Group root = new Group();
+    /**
+     * <p>Объект в котором содержатся трехмерные объекты для отображения осей координат.</p>
+     *
+     * @see Xform
+     */
     final Xform axisGroup = new Xform();
+    /**
+     * <p>Объект в котором содержатся трехмерные объекты для отображения частиц.</p>
+     *
+     * @see Xform
+     */
     final Xform moleculeGroup = new Xform();
+    /**
+     * <p>Объект в котором содержатся все трехмерные объекты, отображаемые при визуализации.</p>
+     *
+     * @see Xform
+     */
     final Xform world = new Xform();
+    /**
+     * <p>Объект-камера.</p>
+     *
+     * @see PerspectiveCamera
+     */
     final PerspectiveCamera camera = new PerspectiveCamera(true);
+    /**
+     * <p>Первый срез корневого объекта для обеспечения независимости при взаимодействии с объектами этого среза.</p>
+     *
+     * @see Xform
+     */
     final Xform cameraXform = new Xform();
+    /**
+     * <p>Второй срез корневого объекта для обеспечения независимости при взаимодействии с объектами этого среза.</p>
+     *
+     * @see Xform
+     */
     final Xform cameraXform2 = new Xform();
+    /**
+     * <p>Третий срез корневого объекта для обеспечения независимости при взаимодействии с объектами этого среза.</p>
+     *
+     * @see Xform
+     */
     final Xform cameraXform3 = new Xform();
+    /**
+     * <p>Нить, в которой будет выполняться анимация.</p>
+     *
+     * @see Thread
+     */
     private Thread animationThread;
+    /**
+     * <p>Объект, описывающий анимацию.</p>
+     *
+     * @see RunAnimate
+     */
     private RunAnimate animation;
+    /**
+     * <p>Объект для сериализации/десериализции Java-объктов
+     * в фомате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
+     *
+     * @see Gson
+     */
     public static Gson gson = new Gson();
+    /**
+     * <p>Константа, в которой хранится начальное отдаление для {@link View3D#camera}.</p>
+     */
     private static final double CAMERA_INITIAL_DISTANCE = -450;
+    /**
+     * <p>Константа, в которой хранится угол поворота вокруг оси X для {@link View3D#camera}.</p>
+     */
     private static final double CAMERA_INITIAL_X_ANGLE = 30.0;
+    /**
+     * <p>Константа, в которой хранится угол поворота вокруг оси Y для {@link View3D#camera}.</p>
+     */
     private static final double CAMERA_INITIAL_Y_ANGLE = 320.0;
+    /**
+     * <p>Константа, в которой хранится значение для определения {@link Camera#nearClip} в {@link View3D#camera}.</p>
+     */
     private static final double CAMERA_NEAR_CLIP = 0.1;
+    /**
+     * <p>Константа, в которой хранится значение для определения {@link Camera#farClip} в {@link View3D#camera}.</p>
+     */
     private static final double CAMERA_FAR_CLIP = 10000.0;
+    /**
+     * <p>Константа, в которой хранится значение длины координатных осей.</p>
+     */
     private static final double AXIS_LENGTH = 250.0;
-
+    /**
+     * <p>Константа, в которой хранится множитель, изпользуемый при манипцляциях с визуализацией,
+     * когда пользователь зажал клавишу ctrl.</p>
+     */
     private static final double CONTROL_MULTIPLIER = 0.1;
+    /**
+     * <p>Константа, в которой хранится множитель, изпользуемый при манипцляциях с визуализацией,
+     * когда пользователь зажал клавишу shift.</p>
+     */
     private static final double SHIFT_MULTIPLIER = 10.0;
+    /**
+     * <p>Константа для регулирования скорости отклика на движение мыши при манипуляциях с визуализацией.</p>
+     */
     private static final double MOUSE_SPEED = 0.1;
-    private static final double ROTATION_SPEED = 2.0;
+    /**
+     * <p>Константа для регулирования скорости вращения вокруг осей при манипуляциях с визуализацией.</p>
+     */
+    private static final double ROTATION_SPEED = 1.0;
+    /**
+     * <p>Константа для регулирования скорости перетаскивания объектов при манипуляциях с визуализацией.</p>
+     */
     private static final double TRACK_SPEED = 3.0;
+    /**
+     * <p>Константа для регулирования масштаба отображения объектов.</p>
+     */
+    private static final double SCALE = 20;
 
-    private static final double modifierFactor = 0.5;
-
-    private static final double scale = 20;
-
+    /**
+     * <p>Переменная для хранения текущего положения мыши (координата X).</p>
+     */
     double mousePosX;
+    /**
+     * <p>Переменная для хранения текущего положения мыши (координата Y).</p>
+     */
     double mousePosY;
+    /**
+     * <p>Переменная для хранения предыдущего положения мыши (координата X).</p>
+     */
     double mouseOldX;
+    /**
+     * <p>Переменная для хранения предыдущего положения мыши (координата Y).</p>
+     */
     double mouseOldY;
+    /**
+     * <p>Переменная для хранения изменения положения мыши (по координате X).</p>
+     */
     double mouseDeltaX;
+    /**
+     * <p>Переменная для хранения изменения положения мыши (по координате Y).</p>
+     */
     double mouseDeltaY;
-
+    /**
+     * <p>Переменная для того, чтобы зафиксифовать факт нажатия на кнопку мыши.</p>
+     */
     boolean isButtonPressed;
+    /**
+     * <p>Список рассчитаных траекторий движения частиц.</p>
+     *
+     * @see Trajectory
+     */
+    private List<Trajectory> trajectories;
 
-    List<Trajectory> trajectories;
-
+    /**
+     * <p>Конструктор для запуска визуализации на основе переданных траекторий движения частиц.</p>
+     *
+     * @param trajectories {@link View3D#trajectories}
+     * @see Trajectory
+     */
     public View3D(List<Trajectory> trajectories) {
         this.trajectories = trajectories;
     }
 
+    /**
+     * <p>Метод, в котором объеты трехмерной визуализации распределяются по срезам,
+     * и инициализируются параметры {@link View3D#camera}.</p>
+     */
     private void buildCamera() {
         root.getChildren().add(world);
         root.getChildren().add(cameraXform);
@@ -89,6 +216,13 @@ public class View3D extends Application {
         cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
     }
 
+    /**
+     * <p>Метод для получения объекта, хранящего иконку кнопки из ресурсных файлов проекта.</p>
+     *
+     * @param name название ресурсного файла, в котором хранится изображение иконки
+     * @return ссылку на объект, содержащий информацию об иконке.
+     * @see ImageView
+     */
     private ImageView getImageView(String name) {
         Image image = new Image(getClass().getResourceAsStream(String.format("/icons/%s.png", name)));
         ImageView imageView = new ImageView(image);
@@ -97,6 +231,10 @@ public class View3D extends Application {
         return imageView;
     }
 
+    /**
+     * <p>Метод, в котором на форму визуализации добавляются кнопки,
+     * и назначаются действия, которые будут выполняться при нажатии на них.</p>
+     */
     private void buildButtons() {
         final int[] i = {-440};
         BiConsumer<Button, Consumer<RunAnimate>> rewindHandler = (button, action) -> {
@@ -145,6 +283,9 @@ public class View3D extends Application {
         });
     }
 
+    /**
+     * <p>Метод, в котором строятся оси координат.</p>
+     */
     private void buildAxes() {
         final PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(Color.DARKRED);
@@ -171,11 +312,18 @@ public class View3D extends Application {
         world.getChildren().addAll(axisGroup);
     }
 
+    /**
+     * <p>Метод, в котором на основе {@link View3D#trajectories} запускается анимация.</p>
+     *
+     * @see RunAnimate
+     * @see Trajectory
+     * @see Trajectory3D
+     */
     private void buildMolecule() {
         animation = new RunAnimate(Trajectory3D.from(trajectories),
                 moleculeGroup,
                 CurrentSettings.getInstance().getAnimateStepSize(),
-                scale);
+                SCALE);
         animationThread = new Thread(animation);
         animationThread.start();
         world.getChildren().addAll(moleculeGroup);
@@ -187,7 +335,14 @@ public class View3D extends Application {
         });
     }
 
-    private void handleMouse(Scene scene, final Node root) {
+    /**
+     * <p>Метод, в котором назначаются обработчики для событий мыши.</p>
+     *
+     * @param scene сцена, на которую назначаются обработчики событий
+     * @see Scene
+     * @see EventHandler
+     */
+    private void handleMouse(Scene scene) {
 
         scene.setOnMousePressed(me -> {
             mousePosX = me.getSceneX();
@@ -212,8 +367,8 @@ public class View3D extends Application {
                 modifier = SHIFT_MULTIPLIER;
             }
             if (me.isPrimaryButtonDown()) {
-                double deltaX = mouseDeltaX * modifierFactor * modifier * ROTATION_SPEED;
-                double deltaY = mouseDeltaY * modifierFactor * modifier * ROTATION_SPEED;
+                double deltaX = mouseDeltaX * modifier * ROTATION_SPEED;
+                double deltaY = mouseDeltaY * modifier * ROTATION_SPEED;
 
                 world.lookupAll("Text").forEach(node -> {
                     Rotate ry = (Rotate) node.getTransforms().get(1);
@@ -235,14 +390,21 @@ public class View3D extends Application {
                 cameraXform2.setTranslateZ(newZ);
             } else if (me.isMiddleButtonDown()) {
                 cameraXform2.t.setX(cameraXform2.t.getX() +
-                        mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);  // -
+                        mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);
                 cameraXform2.t.setY(cameraXform2.t.getY() +
-                        mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);  // -
+                        mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
             }
-        }); // setOnMouseDragged
-    } //handleMouse
+        });
+    }
 
-    private void handleKeyboard(Scene scene, final Node root) {
+    /**
+     * <p>Метод, в котором назначаются обработчики для событий клавиатуры.</p>
+     *
+     * @param scene сцена, на которую назначаются обработчики событий
+     * @see Scene
+     * @see EventHandler
+     */
+    private void handleKeyboard(Scene scene) {
 
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -278,9 +440,9 @@ public class View3D extends Application {
                 case C:
                     world.lookupAll("Text").forEach(node -> node.setVisible(!node.isVisible()));
                     break;
-            } // switch
-        });  // setOnKeyPressed
-    }  //  handleKeyboard()
+            }
+        });
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -291,8 +453,8 @@ public class View3D extends Application {
 
         Scene scene = new Scene(root, 1024, 600, true);
         scene.setFill(Color.WHITE);
-        handleKeyboard(scene, world);
-        handleMouse(scene, world);
+        handleKeyboard(scene);
+        handleMouse(scene);
 
         primaryStage.setTitle("Трехмерная анимированная модель");
         primaryStage.setScene(scene);

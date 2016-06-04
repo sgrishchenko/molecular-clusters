@@ -5,6 +5,9 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 
+/**
+ * see <a href="https://docs.oracle.com/javase/8/javafx/graphics-tutorial/sampleapp3d-code.htm#CJAGGIFG">Xform</a>
+ * */
 public class Xform extends Group {
 
     public enum RotateOrder {

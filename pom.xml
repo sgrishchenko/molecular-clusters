@@ -6,15 +6,24 @@
 
     <groupId>vsu.sc.grishchenko</groupId>
     <artifactId>molecularclusters</artifactId>
-    <version>${rootVersion}-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <exeFileName>Molecular Clusters</exeFileName>
-        <rootVersion>1.0</rootVersion>
+        <exeVersion>1.0.0.0</exeVersion>
     </properties>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -22,6 +31,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
 
@@ -62,8 +72,25 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <windowtitle>${exeFileName}</windowtitle>
+                    <doctitle>${exeFileName}</doctitle>
+                    <show>private</show>
+                    <links>
+                        <link>http://docs.oracle.com/javase/8/docs/api/</link>
+                        <link>http://docs.oracle.com/javase/8/javafx/api/</link>
+                    </links>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.10</version>
                 <executions>
                     <execution>
                         <id>l4j-clui</id>
@@ -85,11 +112,11 @@
                                 <minVersion>1.8.0</minVersion>
                             </jre>
                             <versionInfo>
-                                <fileVersion>${rootVersion}.0.0</fileVersion>
+                                <fileVersion>${exeVersion}</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Программа для моделирования молекулярных кластеров</fileDescription>
                                 <copyright>Copyright © 2016 grishchenko</copyright>
-                                <productVersion>${rootVersion}.0.0</productVersion>
+                                <productVersion>${exeVersion}</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <companyName>grishchenko</companyName>
                                 <productName>${exeFileName}</productName>
