@@ -1,16 +1,51 @@
 package vsu.sc.grishchenko.molecularclusters.experiment;
 
+/**
+ * <p>Класс для хранения макроскопических параметров,
+ * полученных на основе рассчитанных траекторий движения частиц модели.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class AnalyzeResult {
+    /**
+     * <p>Радиус нанотрубки.</p>
+     */
     double radius;
+    /**
+     * <p>Начальный азимутальный угол.</p>
+     */
     double fi;
+    /**
+     * <p>Начальный зенитный угол.</p>
+     */
     double teta;
-
+    /**
+     * <p>Длина пройденного пути в нанотрубке.</p>
+     */
     double pathLength;
+    /**
+     * <p>Отношение {@link AnalyzeResult#pathLength} к длине нанотрубки.</p>
+     */
     double pathLengthToTubeLength;
+    /**
+     * <p>Средняя скорость движения.</p>
+     */
     double avgSpeed;
+    /**
+     * <p>Средняя длина свободного пробега.</p>
+     */
     double avgFreePath;
+    /**
+     * <p>Коэффициент диффузии.</p>
+     */
     double diffusionCoeff;
+    /**
+     * <p>Азимутальный угол при вылете из трубки.</p>
+     */
     double finalFi;
+    /**
+     * <p>Зенитный угол при вылете из трубки.</p>
+     */
     double finalTeta;
 
     public AnalyzeResult(double radius, double fi, double teta) {

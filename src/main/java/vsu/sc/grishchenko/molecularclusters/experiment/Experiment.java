@@ -9,7 +9,21 @@ import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 
 import java.util.function.Consumer;
 
+/**
+ * <p>Класс, который позволяет запускать диаоговое окно для конфигурации задания
+ * на выполнение серии экспериментов.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Application
+ */
 public class Experiment extends Application {
+    /**
+     * <p>Действие, которое необходимо выполнить после успешного указания
+     * параметров конфигурации запуска.</p>
+     *
+     * @see ExperimentConfig
+     * @see Consumer
+     */
     private Consumer<ExperimentConfig> onStart;
 
     public Experiment(Consumer<ExperimentConfig> onStart) {

@@ -11,7 +11,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import vsu.sc.grishchenko.molecularclusters.math.Trajectory3D;
 import vsu.sc.grishchenko.molecularclusters.view.ColorAdapter;
-import vsu.sc.grishchenko.molecularclusters.view.Xform;
 
 import java.util.*;
 
@@ -149,7 +148,7 @@ public class RunAnimate implements Runnable {
      * @param Z      пространственная координата Z
      * @param radius радиус частицы
      * @param color  цвет частицы
-     * @return созданную частицу для визуализации
+     * @return созданную частицу для визуализации.
      * @see Color
      * @see Sphere
      */

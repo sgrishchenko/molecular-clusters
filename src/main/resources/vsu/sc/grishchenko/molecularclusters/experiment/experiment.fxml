@@ -93,8 +93,8 @@
             <TextField fx:id="Yto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
             <TextField fx:id="Zto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
             <TextField fx:id="Vto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
-            <TextField fx:id="Tto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
-            <TextField fx:id="Fto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="9" />
+            <TextField fx:id="Fto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
+            <TextField fx:id="Tto" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="4" GridPane.rowIndex="9" />
             <Label text="с шагом" GridPane.columnIndex="5" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="5.0" />
@@ -129,8 +129,8 @@
             <TextField fx:id="Ystep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="5" />
             <TextField fx:id="Vstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="7" />
             <TextField fx:id="Zstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="6" />
-            <TextField fx:id="Fstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="9" />
-            <TextField fx:id="Tstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="8" />
+            <TextField fx:id="Tstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="9" />
+            <TextField fx:id="Fstep" disable="true" prefHeight="25.0" prefWidth="54.0" GridPane.columnIndex="6" GridPane.rowIndex="8" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="10">
                <children>
                   <Button cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefWidth="70.0" text="Отмена" />
@@ -169,7 +169,7 @@
                   <Insets />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="changeT" mnemonicParsing="false" text="Изменение азимутального угла вектора скорости:" wrapText="true" GridPane.rowIndex="8">
+            <CheckBox fx:id="changeF" mnemonicParsing="false" text="Изменение азимутального угла вектора скорости:" wrapText="true" GridPane.rowIndex="8">
                <padding>
                   <Insets left="5.0" />
                </padding>
@@ -177,7 +177,7 @@
                   <Insets />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox fx:id="changeF" mnemonicParsing="false" text="Изменение зенитного угла вектора скорости:" wrapText="true" GridPane.rowIndex="9">
+            <CheckBox fx:id="changeT" mnemonicParsing="false" text="Изменение зенитного угла вектора скорости:" wrapText="true" GridPane.rowIndex="9">
                <padding>
                   <Insets left="5.0" />
                </padding>
@@ -217,16 +217,16 @@
                      </HBox.margin>
                   </Label>
                   <TextField fx:id="Vfrom" prefWidth="40.0" />
-                  <TextField fx:id="Tfrom" prefWidth="40.0" />
                   <TextField fx:id="Ffrom" prefWidth="40.0" />
+                  <TextField fx:id="Tfrom" prefWidth="40.0" />
                </children>
             </HBox>
             <Label fx:id="labelXfrom" GridPane.columnIndex="2" GridPane.rowIndex="4" />
             <Label fx:id="labelYfrom" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <Label fx:id="labelZfrom" GridPane.columnIndex="2" GridPane.rowIndex="6" />
             <Label fx:id="labelVfrom" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-            <Label fx:id="labelTfrom" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-            <Label fx:id="labelFfrom" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+            <Label fx:id="labelFfrom" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+            <Label fx:id="labelTfrom" GridPane.columnIndex="2" GridPane.rowIndex="9" />
          </children>
       </GridPane>
    </children>

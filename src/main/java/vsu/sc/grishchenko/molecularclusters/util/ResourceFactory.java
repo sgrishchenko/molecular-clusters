@@ -17,7 +17,7 @@ public final class ResourceFactory {
      *
      * @param aClass   класс, пакет которого нужно использовать для доступа к файлу
      * @param fileName имя файла
-     * @return полный путь к файлу
+     * @return полный путь к файлу.
      */
     private static String getFullFileName(Class<?> aClass, String fileName) {
         return "/" + aClass.getPackage().getName().replaceAll("\\.", "/") + "/" + fileName;
@@ -30,7 +30,7 @@ public final class ResourceFactory {
      *
      * @param o        объект, пакет которого нужно использовать для доступа к файлу
      * @param fileName имя файла
-     * @return ссылку на ресурс проекта
+     * @return ссылку на ресурс проекта.
      * @see URL
      */
     public static URL getResource(Object o, String fileName) {
@@ -44,7 +44,7 @@ public final class ResourceFactory {
      *
      * @param aClass   класс, пакет которого нужно использовать для доступа к файлу
      * @param fileName имя файла
-     * @return ссылку на ресурс проекта
+     * @return ссылку на ресурс проекта.
      * @see URL
      */
     public static URL getResource(Class<?> aClass, String fileName) {
@@ -58,7 +58,7 @@ public final class ResourceFactory {
      *
      * @param aClass   класс, пакет которого нужно использовать для доступа к файлу
      * @param fileName имя файла <i>properties</i>
-     * @return карту настроек
+     * @return карту настроек.
      * @see Properties
      */
     public static Properties getProperties(Class<?> aClass, String fileName) {

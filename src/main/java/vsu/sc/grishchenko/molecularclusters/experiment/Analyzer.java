@@ -10,7 +10,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
+/**
+ * <p>Класс с набором статических методов для получения макроскопических параметров моделей.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public final class Analyzer {
+    /**
+     * <p>Получения макроскопических параметров на основе рассчитанных траекторий движениея частиц.</p>
+     *
+     * @param solvingSystemResult список рассчитанных траекторий движения частиц
+     * @return объект с макроскописекими параметрами.
+     * @see AnalyzeResult
+     * @see Trajectory
+     */
     public static AnalyzeResult getParams(List<Trajectory> solvingSystemResult) {
 
         List<String> movingPoints = getMovingPoints(solvingSystemResult);
@@ -32,7 +45,7 @@ public final class Analyzer {
 
         Double initRadius = Math.sqrt(
                 Math.pow(resultMap.get(xMovingPoint).getPath().get(0), 2) +
-                Math.pow(resultMap.get(yMovingPoint).getPath().get(0), 2)
+                        Math.pow(resultMap.get(yMovingPoint).getPath().get(0), 2)
         );
 
         AnalyzeResult result = new AnalyzeResult(
@@ -106,6 +119,15 @@ public final class Analyzer {
         return result;
     }
 
+    /**
+     * <p>Служебный метод, определяющий, изменила ли частица направление движения по определенной координате.</p>
+     *
+     * @param index               номер временной метки
+     * @param label               метка рассматриваемой частицы
+     * @param solvingSystemResult карта метох всех частиц системы и траекторий их движения
+     * @return <code>true</code>, если частица изменила направление движения, иначе <code>false</code>
+     * @see Trajectory
+     */
     private static boolean isDerivativeChangedSign(Integer index,
                                                    String label,
                                                    Map<String, Trajectory> solvingSystemResult) {
@@ -116,6 +138,16 @@ public final class Analyzer {
         return Math.signum(difference1) != Math.signum(difference2);
     }
 
+    /**
+     * <p>Служебный метод для получения азимутального угла для вектора скорости.</p>
+     *
+     * @param xLabel              метка рассматриваемой частицы по координате X
+     * @param yLabel              метка рассматриваемой частицы по координате Y
+     * @param index               номер временной метки
+     * @param solvingSystemResult карта метох всех частиц системы и траекторий их движения
+     * @return значение азимутального угла в градусах.
+     * @see Trajectory
+     */
     private static double getFi(String xLabel, String yLabel,
                                 int index, Map<String, Trajectory> solvingSystemResult) {
 
@@ -125,22 +157,47 @@ public final class Analyzer {
         ));
     }
 
+    /**
+     * <p>Служебный метод для получения зенитного угла для вектора скорости.</p>
+     *
+     * @param xLabel              метка рассматриваемой частицы по координате X
+     * @param yLabel              метка рассматриваемой частицы по координате Y
+     * @param zLabel              метка рассматриваемой частицы по координате Z
+     * @param index               номер временной метки
+     * @param solvingSystemResult карта метох всех частиц системы и траекторий их движения
+     * @return значение зенитного угла в градусах.
+     * @see Trajectory
+     */
     private static double getTeta(String xLabel, String yLabel, String zLabel,
-                                int index, Map<String, Trajectory> solvingSystemResult) {
+                                  int index, Map<String, Trajectory> solvingSystemResult) {
 
         Double radius = Math.sqrt(
                 Math.pow(solvingSystemResult.get(xLabel).getPath().get(index + 1) - solvingSystemResult.get(xLabel).getPath().get(index), 2) +
-                Math.pow(solvingSystemResult.get(yLabel).getPath().get(index + 1) - solvingSystemResult.get(yLabel).getPath().get(index), 2) +
-                Math.pow(solvingSystemResult.get(zLabel).getPath().get(index + 1) - solvingSystemResult.get(zLabel).getPath().get(index), 2)
+                        Math.pow(solvingSystemResult.get(yLabel).getPath().get(index + 1) - solvingSystemResult.get(yLabel).getPath().get(index), 2) +
+                        Math.pow(solvingSystemResult.get(zLabel).getPath().get(index + 1) - solvingSystemResult.get(zLabel).getPath().get(index), 2)
         );
 
-        return Math.toDegrees(Math.acos((solvingSystemResult.get(zLabel).getPath().get(index + 1) - solvingSystemResult.get(zLabel).getPath().get(index))/ radius));
+        return Math.toDegrees(Math.acos((solvingSystemResult.get(zLabel).getPath().get(index + 1) - solvingSystemResult.get(zLabel).getPath().get(index)) / radius));
     }
 
+    /**
+     * <p>Рассчет радиуса нанотрубки на основе индексов хиральности.</p>
+     *
+     * @param m первый индекс хиральности
+     * @param n второй индекс хиральности
+     * @return значение радиуса нанотрубки.
+     */
     protected static Double getTubeRadius(Integer m, Integer n) {
         return 1. / 2 * Math.sqrt(3) / Math.PI * 1.42 * Math.sqrt(Math.pow(m, 2) + Math.pow(n, 2) + m * n);
     }
 
+    /**
+     * <p>Рассчет радиуса нанотрубки на основе координат атомов, которые её образуют.</p>
+     *
+     * @param tubeOnly список траекторий движения атомов, образующих нанотрубку
+     * @return значение радиуса нанотрубки.
+     * @see Trajectory
+     */
     private static Double getTubeRadius(List<Trajectory> tubeOnly) {
         double[] xPoints = tubeOnly.stream()
                 .filter(entry -> entry.getLabel().startsWith("x"))
@@ -159,6 +216,13 @@ public final class Analyzer {
         return Math.max(xR, zR) / 2;
     }
 
+    /**
+     * <p>Рассчет длины нанотрубки на основе координат атомов, которые её образуют.</p>
+     *
+     * @param tubeOnly список траекторий движения атомов, образующих нанотрубку
+     * @return значение длины нанотрубки.
+     * @see Trajectory
+     */
     private static Double getTubeLength(List<Trajectory> tubeOnly) {
 
         double[] yPoints = tubeOnly.stream()
@@ -169,6 +233,13 @@ public final class Analyzer {
         return Math.abs(DoubleStream.of(yPoints).max().getAsDouble() - DoubleStream.of(yPoints).min().getAsDouble());
     }
 
+    /**
+     * <p>Получение списка меток частиц, которые в процессе моделирования меняли свое местоположение.</p>
+     *
+     * @param solvingSystemResult карта метох всех частиц системы и траекторий их движения
+     * @return список меток движущихся частиц.
+     * @see Trajectory
+     */
     private static List<String> getMovingPoints(List<Trajectory> solvingSystemResult) {
         List<String> movingPoints = new ArrayList<>();
         movingPoints.addAll(solvingSystemResult.stream()
@@ -179,16 +250,26 @@ public final class Analyzer {
         return movingPoints;
     }
 
-
-
+    /**
+     * <p>Пребразование сферических координат в декартовы.</p>
+     *
+     * @param spherical сферические координаты
+     * @return декартовы координаты.
+     */
     public static Double[] toCartesian(Double[] spherical) {
-        return new Double[] {
+        return new Double[]{
                 spherical[0] * Math.sin(Math.toRadians(spherical[2])) * Math.cos(Math.toRadians(spherical[1])),
                 spherical[0] * Math.sin(Math.toRadians(spherical[2])) * Math.sin(Math.toRadians(spherical[1])),
                 spherical[0] * Math.cos(Math.toRadians(spherical[2]))
         };
     }
 
+    /**
+     * <p>Пребразование декартовых координат в сферические.</p>
+     *
+     * @param cartesian декартовы координаты
+     * @return сферические координаты.
+     */
     public static Double[] toSpherical(Double[] cartesian) {
         Double r = Math.sqrt(Math.pow(cartesian[0], 2) + Math.pow(cartesian[1], 2) + Math.pow(cartesian[2], 2));
         if (r.equals(0.0)) return new Double[]{0., 0., 0.};

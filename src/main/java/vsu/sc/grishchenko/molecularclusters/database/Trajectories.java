@@ -7,6 +7,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 
+/**
+ * <p>Класс, который позволяет запускать диаоговое окно для просмотра списка
+ * траекторий движения частиц разлихних моделей, сохраненных в базе данных.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Application
+ */
 public class Trajectories extends Application{
     @Override
     public void start(Stage stage) throws Exception {

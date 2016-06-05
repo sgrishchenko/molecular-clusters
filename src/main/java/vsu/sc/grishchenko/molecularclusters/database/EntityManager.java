@@ -11,13 +11,27 @@ import org.hibernate.criterion.Restrictions;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * <p>Класс с набором статических методов для управления доступом к сущностям базы данных.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class EntityManager {
+    /**
+     * <p>Объект, создающий сессию соединения с базой данных.</p>
+     */
     private static SessionFactory factory;
+    /**
+     * <p>Объект сессии соединения с базой данных.</p>
+     */
     private static Session session;
 
     private EntityManager() {
     }
 
+    /**
+     * <p>Метод инициализации соединения с базой данных.</p>
+     */
     public static void initialise() {
         try {
             factory = new Configuration()
@@ -30,6 +44,13 @@ public class EntityManager {
         session = factory.openSession();
     }
 
+    /**
+     * <p>Транзакционное выполнения некоторго действия с объектами базы данных.</p>
+     *
+     * @param <T>    тип объекта базы данных
+     * @param action действие, которое необходимо выполнить
+     * @return результат выполнения действия.
+     */
     private static <T> T transactional(Supplier<T> action) {
         Transaction tx = null;
         T result = null;
@@ -48,10 +69,20 @@ public class EntityManager {
         return result;
     }
 
+    /**
+     * <p>Сохраняет объект в базе данных.</p>
+     *
+     * @param entity объект, который требуется сохранить
+     */
     public static void save(Object entity) {
         transactional(() -> session.save(entity));
     }
 
+    /**
+     * <p>Обновляет объект в базе данных.</p>
+     *
+     * @param entity объект, который требуется обновить
+     */
     public static void update(Object entity) {
         transactional(() -> {
             session.update(entity);
@@ -59,6 +90,11 @@ public class EntityManager {
         });
     }
 
+    /**
+     * <p>Обновляет/сохраняет объект в базе данных.</p>
+     *
+     * @param entity объект, который требуется сохранить/обновить
+     */
     public static void saveOrUpdate(Object entity) {
         transactional(() -> {
             session.saveOrUpdate(entity);
@@ -66,6 +102,14 @@ public class EntityManager {
         });
     }
 
+    /**
+     * <p>Получение объекта по индетификатору.</p>
+     *
+     * @param <T>    тип объекта базы данных
+     * @param id     идентификатор
+     * @param tClass класс объекта
+     * @return искомый объект или <code>null</code>.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T find(long id, Class<T> tClass) {
         return transactional(() -> (T) session.createCriteria(tClass)
@@ -73,6 +117,15 @@ public class EntityManager {
                 .uniqueResult());
     }
 
+    /**
+     * <p>Получение объекта по значению в определенном поле.</p>
+     *
+     * @param <T>       тип объекта базы данных
+     * @param fieldName имя поля
+     * @param value     эталонное значение
+     * @param tClass    класс объекта
+     * @return искомый объект или <code>null</code>.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T find(String fieldName, Object value, Class<T> tClass) {
         return transactional(() -> (T) session.createCriteria(tClass)
@@ -80,6 +133,15 @@ public class EntityManager {
                 .uniqueResult());
     }
 
+    /**
+     * <p>Получение списка объектов по значению в определенном поле.</p>
+     *
+     * @param <T>       тип объекта базы данных
+     * @param fieldName имя поля
+     * @param value     эталонное значение
+     * @param tClass    класс объекта
+     * @return список искомых объект или пустой список.
+     */
     @SuppressWarnings("unchecked")
     public static <T> List<T> findList(String fieldName, Object value, Class<T> tClass) {
         return transactional(() -> (List<T>) session.createCriteria(tClass)
@@ -87,12 +149,28 @@ public class EntityManager {
                 .list());
     }
 
+    /**
+     * <p>Получение списка всех объектов определенного класса.</p>
+     *
+     * @param <T>    тип объекта базы данных
+     * @param tClass класс объекта
+     * @return список искомых объект или пустой список.
+     */
     @SuppressWarnings("unchecked")
     public static <T> List<T> findAll(Class<T> tClass) {
         return transactional(() -> (List<T>) session.createCriteria(tClass)
                 .list());
     }
 
+    /**
+     * <p>Проверка существования объектов по значению в определенном поле.</p>
+     *
+     * @param <T>       тип объекта базы данных
+     * @param fieldName имя поля
+     * @param value     эталонное значение
+     * @param tClass    класс объекта
+     * @return <code>true</code>, если существуют объекты, удовлетворяющие условиям поиска, иначе <code>false</code>.
+     */
     @SuppressWarnings("unchecked")
     public static <T> boolean isExists(String fieldName, Object value, Class<T> tClass) {
         return !transactional(() -> session.createCriteria(tClass)
@@ -102,6 +180,9 @@ public class EntityManager {
                 .list().isEmpty());
     }
 
+    /**
+     * <p>Метод закрытия соединения с базой данных.</p>
+     */
     public static void close() {
         session.close();
         factory.close();

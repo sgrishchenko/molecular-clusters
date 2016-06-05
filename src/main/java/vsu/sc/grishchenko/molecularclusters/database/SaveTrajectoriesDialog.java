@@ -13,7 +13,19 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.entity.TrajectoryListEntity;
 
+/**
+ * <p>Класс, который позволяет запускать диаоговое окно для сохранения
+ * рассчитанных траекторий движения частиц модели в базе данных.</p>
+ *
+ * @author Грищенко Сергей
+ * @see Application
+ */
 public class SaveTrajectoriesDialog extends Application {
+    /**
+     * <p>Объект сущности списка траекторий движения частиц.</p>
+     *
+     * @see TrajectoryListEntity
+     */
     private TrajectoryListEntity trajectory;
 
     public SaveTrajectoriesDialog(TrajectoryListEntity trajectory) {
@@ -58,7 +70,7 @@ public class SaveTrajectoriesDialog extends Application {
 
             errorMessage.setText("");
             trajectory.setName(name);
-            EntityManager.saveOrUpdate(trajectory);
+            EntityManager.save(trajectory);
             stage.close();
         });
         vBox.getChildren().add(button);
