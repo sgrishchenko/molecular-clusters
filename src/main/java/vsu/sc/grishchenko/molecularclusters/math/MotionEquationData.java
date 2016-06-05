@@ -1,15 +1,34 @@
 package vsu.sc.grishchenko.molecularclusters.math;
 
+/**
+ * <p>Класс для описания информации о частице моделируемой системы.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class MotionEquationData {
+    /**
+     * <p>Текстовая метка частицы.</p>
+     */
     private String label;
-    private String accelerationEquation;
+    /**
+     * <p>Модуль суммы сил, действующих на чатицу, описанный аналитическим выражением.</p>
+     */
+    private String accelerationEquation = "0";
+    /**
+     * <p>Вектор начального положения частицы.</p>
+     */
     private Double[] initialPosition = {0., 0., 0.};
+    /**
+     * <p>Вектор начальной скорости частицы.</p>
+     */
     private Double[] initialVelocity = {0., 0., 0.};
+    /**
+     * <p>Цвет частицы.</p>
+     */
     private Color color = new Color(0.6, 0, 0, 1);
 
     public MotionEquationData(String label) {
         this.label = label;
-        this.accelerationEquation = "0";
     }
 
     public MotionEquationData(String label,

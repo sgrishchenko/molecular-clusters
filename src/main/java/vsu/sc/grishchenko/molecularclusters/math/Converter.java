@@ -8,6 +8,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * <p>Временно созданный класс для конвертации координат частиц,
+ * описанных в специфическом формате,
+ * из этого формата в формат, подходящий для текущего приложения.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class Converter {
     public static Gson gson = new Gson();
 

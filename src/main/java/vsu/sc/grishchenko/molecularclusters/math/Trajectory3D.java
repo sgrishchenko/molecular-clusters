@@ -9,9 +9,24 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * <p>Класс для описания траетории движения частицы в трехмерном пространстве.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class Trajectory3D {
+    /**
+     * <p>Текстовая метка частицы.</p>
+     */
     private String label;
+    /**
+     * <p>Цвет частицы.</p>
+     */
     private Color color = new Color(0.6, 0, 0, 1);
+    /**
+     * <p>Список объектов {@link Point3D}, описывающих точки трехмерного пространства
+     * траектории движения частицы.</p>
+     */
     private List<Point3D> path;
 
     public Trajectory3D(String label, Color color, List<Point3D> path) {

@@ -1,5 +1,11 @@
 package vsu.sc.grishchenko.molecularclusters.math;
 
+/**
+ * <p>Класс для описания цвета частицы. Создан, чтобы не хранить в базе данных
+ * и строках в фомате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a> лишней информции.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class Color {
     double red;
     double green;

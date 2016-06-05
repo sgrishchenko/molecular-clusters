@@ -2,17 +2,46 @@ package vsu.sc.grishchenko.molecularclusters.math;
 
 import net.objecthunter.exp4j.Expression;
 
+/**
+ * <p>Класс для описания уравнения движения частицы моделируемой системы.
+ * Речь идет об описание определнного измерения при движении в трехмерном пространстве.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class MotionEquation {
+    /**
+     * <p>Текстовая метка частицы.</p>
+     */
     private String label;
-
+    /**
+     * <p>Предпоследнее значение положения частицы.</p>
+     */
     private double beforeLastPosition;
+    /**
+     * <p>Последнее значенияе положения частицы.</p>
+     */
     private double pastPosition;
-
+    /**
+     * <p>Значение начальной скорости частицы.</p>
+     */
     private double initialVelocity;
-
+    /**
+     * <p>Модуль суммы сил, действующих на чатицу, описанный аналитическим выражением.</p>
+     */
     private String accelerationEquation;
+    /**
+     * <p>Объект {@link Expression}, созданный на основе {@link MotionEquation#accelerationEquation}.</p>
+     *
+     * @see Exception
+     */
     private Expression accelerationExpression;
+    /**
+     * <p>Значение ускорения частицы.</p>
+     */
     private double acceleration;
+    /**
+     * <p>Цвет частицы.</p>
+     */
     private Color color = new Color(0.6, 0, 0, 1);
 
     public MotionEquation(String label,

@@ -2,9 +2,23 @@ package vsu.sc.grishchenko.molecularclusters.math;
 
 import java.util.List;
 
+/**
+ * <p>Класс для описания траетории движения частицы в одномерном пространстве.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public class Trajectory {
+    /**
+     * <p>Текстовая метка частицы.</p>
+     */
     private String label;
+    /**
+     * <p>Цвет частицы.</p>
+     */
     private Color color = new Color(0.6, 0, 0, 1);
+    /**
+     * <p>Список вещественных значений, описывающий траекторию движения.</p>
+     */
     private List<Double> path;
 
     public Trajectory(String label, Color color, List<Double> path) {

@@ -5,18 +5,53 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * <p>Класс с набором утилитных методов для решение дифференциальных уравнений.</p>
+ *
+ * @author Грищенко Сергей
+ */
 public final class Solver {
-    private final static String separatorGroup= "(\\s|\\+|\\-|\\*|/|\\(|\\))";
+    /**
+     * <p>Константа, используемая в регуляном выражения для добавления к
+     * текстовой метке частицы префиксов <i>x</i>, <i>y</i> и <i>z</i>
+     * при формировании из одного векторного уравнения три вещественных.</p>
+     */
+    private final static String separatorGroup = "(\\s|\\+|\\-|\\*|/|\\(|\\))";
 
+    /**
+     * <p>Метод преобразования объекта {@link MotionEquationData}
+     * в объект {@link MotionEquation}. Из одного объекта {@link MotionEquationData}
+     * потенциально можно получить три различных объекта {@link MotionEquation}
+     * в зависимости от того, какую проекцию векторного уравнения
+     * в {@link MotionEquationData} требуется рассмотреть.</p>
+     *
+     * @param data       объект {@link MotionEquationData}
+     * @param projection индекс проекции, которую следует использовать для преобразования
+     *                   (<code>0</code> - проекция по координате X,
+     *                   <code>1</code> - проекция по координате Y,
+     *                   <code>2</code> - проекция по координате Z)
+     * @param dataList   общий список всех объектов {@link MotionEquationData} для моделируемой системы
+     * @return результирующий объект {@link MotionEquationData}.
+     * @see MotionEquationData
+     * @see MotionEquation
+     */
     private static MotionEquation getMotionEquation(MotionEquationData data,
                                                     int projection,
                                                     List<MotionEquationData> dataList) {
         String projectionLabel;
         switch (projection) {
-            case 0 : projectionLabel = "x"; break;
-            case 1 : projectionLabel = "y"; break;
-            case 2 : projectionLabel = "z"; break;
-            default : projectionLabel = ""; break;
+            case 0:
+                projectionLabel = "x";
+                break;
+            case 1:
+                projectionLabel = "y";
+                break;
+            case 2:
+                projectionLabel = "z";
+                break;
+            default:
+                projectionLabel = "";
+                break;
         }
         MotionEquation result = new MotionEquation(projectionLabel + data.getLabel(),
                 data.getAccelerationEquation(),
@@ -32,10 +67,22 @@ public final class Solver {
         return result;
     }
 
+    /**
+     * <p>Метод, реализующий решение системы дифференциальный уравнений второго порядка
+     * с помощью метода численного интегрирования <i>Верле</i>.</p>
+     *
+     * @param dataList    список всех объектов {@link MotionEquationData} для моделируемой системы
+     * @param initialTime начальное значение для переменной времени
+     * @param countSteps  количество шагов при выполнении алгоритма численного интегрирования
+     * @param stepSize    величина шага при выполнении алгоритма численного интегрирования
+     * @return список объектов {@link Trajectory}, описывающий траектрии движения частиц моделируемой системы.
+     * @see MotionEquationData
+     * @see Trajectory
+     */
     public static List<Trajectory> solveVerlet(List<MotionEquationData> dataList,
-                                                        double initialTime,
-                                                        int countSteps,
-                                                        double stepSize) {
+                                               double initialTime,
+                                               int countSteps,
+                                               double stepSize) {
 
         ExpressionBuilder builder;
         double initialAcceleration;
@@ -48,7 +95,7 @@ public final class Solver {
         for (MotionEquationData data : dataList) {
             if (data.getAccelerationEquation().contains("r$")) {
                 compiledEquation = new StringBuilder();
-                for (int i = 0 ; i < dataList.size(); i++) {
+                for (int i = 0; i < dataList.size(); i++) {
                     if (!data.getLabel().equals(dataList.get(i).getLabel())) {
                         if (compiledEquation.length() != 0 && i != 0) compiledEquation.append("+");
 
