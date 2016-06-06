@@ -3,7 +3,10 @@ package vsu.sc.grishchenko.molecularclusters.view;
 import com.google.gson.Gson;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.scene.*;
+import javafx.scene.Camera;
+import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,19 +44,19 @@ public class View3D extends Application {
      */
     final Group root = new Group();
     /**
-     * <p>Объект в котором содержатся трехмерные объекты для отображения осей координат.</p>
+     * <p>Объект, в котором содержатся трехмерные объекты для отображения осей координат.</p>
      *
      * @see Xform
      */
     final Xform axisGroup = new Xform();
     /**
-     * <p>Объект в котором содержатся трехмерные объекты для отображения частиц.</p>
+     * <p>Объект, в котором содержатся трехмерные объекты для отображения частиц.</p>
      *
      * @see Xform
      */
     final Xform moleculeGroup = new Xform();
     /**
-     * <p>Объект в котором содержатся все трехмерные объекты, отображаемые при визуализации.</p>
+     * <p>Объект, в котором содержатся все трехмерные объекты, отображаемые при визуализации.</p>
      *
      * @see Xform
      */
@@ -95,8 +98,8 @@ public class View3D extends Application {
      */
     private RunAnimate animation;
     /**
-     * <p>Объект для сериализации/десериализции Java-объктов
-     * в фомате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
+     * <p>Объект для сериализации/десериализции Java-объектов
+     * в формате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
      *
      * @see Gson
      */
@@ -126,13 +129,13 @@ public class View3D extends Application {
      */
     private static final double AXIS_LENGTH = 250.0;
     /**
-     * <p>Константа, в которой хранится множитель, изпользуемый при манипцляциях с визуализацией,
-     * когда пользователь зажал клавишу ctrl.</p>
+     * <p>Константа, в которой хранится множитель, используемый при манипуцляциях с визуализацией,
+     * когда пользователь зажал клавишу <i>ctrl</i>.</p>
      */
     private static final double CONTROL_MULTIPLIER = 0.1;
     /**
-     * <p>Константа, в которой хранится множитель, изпользуемый при манипцляциях с визуализацией,
-     * когда пользователь зажал клавишу shift.</p>
+     * <p>Константа, в которой хранится множитель, используемый при манипуцляциях с визуализацией,
+     * когда пользователь зажал клавишу <i>shift</i>.</p>
      */
     private static final double SHIFT_MULTIPLIER = 10.0;
     /**
@@ -177,11 +180,11 @@ public class View3D extends Application {
      */
     double mouseDeltaY;
     /**
-     * <p>Переменная для того, чтобы зафиксифовать факт нажатия на кнопку мыши.</p>
+     * <p>Переменная для того, чтобы зафиксировать факт нажатия на кнопку мыши.</p>
      */
     boolean isButtonPressed;
     /**
-     * <p>Список рассчитаных траекторий движения частиц.</p>
+     * <p>Список рассчитанных траекторий движения частиц.</p>
      *
      * @see Trajectory
      */
@@ -198,7 +201,7 @@ public class View3D extends Application {
     }
 
     /**
-     * <p>Метод, в котором объеты трехмерной визуализации распределяются по срезам,
+     * <p>Метод, в котором объекты трехмерной визуализации распределяются по срезам,
      * и инициализируются параметры {@link View3D#camera}.</p>
      */
     private void buildCamera() {

@@ -19,8 +19,8 @@ import java.util.function.Function;
 import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.getParams;
 
 /**
- * <p>Класс, описывающий фоновый процесс выполнения задания на рассчет серии экспериментов.
- * Ожидается? что после завершения процесса расчета
+ * <p>Класс, описывающий фоновый процесс выполнения задания на расчет серии экспериментов.
+ * Ожидается, что после завершения процесса расчета
  * будет получен список результатов {@link AnalyzeResult}.</p>
  *
  * @author Грищенко Сергей
@@ -62,8 +62,8 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
      */
     private int experimentLength;
     /**
-     * <p>Объект для сериализации/десериализции Java-объктов
-     * в фомате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
+     * <p>Объект для сериализации/десериализции Java-объектов
+     * в формате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
      *
      * @see <a href="http://static.javadoc.io/com.google.code.gson/gson/2.6.2/com/google/gson/Gson.html">Gson</a>
      */
@@ -80,7 +80,7 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
     /**
      * <p>Метод, отвечающий за получение из уравнений движения частиц моделируемой системы
      * для текущего состояния объекта {@link ExperimentTask#dataList}
-     * списока траекторий движения этих частиц, расчет макроскопических параметров
+     * списка траекторий движения этих частиц, расчет макроскопических параметров
      * для этих траекторий движения и сохранения результатов в базу данных.</p>
      *
      * @return список траекторий движения частиц модели.
@@ -103,7 +103,7 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
                 Analyzer.getParams(solveResult)));
 
         if (isCancelled()) {
-            updateMessage(String.format("Эксперимент прерван, выполненые расчеты - %d из %d.",
+            updateMessage(String.format("Эксперимент прерван, выполненные расчеты - %d из %d.",
                     experimentIndex, experimentLength));
         }
 
@@ -114,10 +114,10 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
      * <p>В рамках данного метода рекурсивно обрабатываются все итерации,
      * описанные в объекте {@link ExperimentTask#config}.</p>
      *
-     * @param variableEquation объект, описываещий уравнение движения варьируемой частицы
+     * @param variableEquation объект, описывающий уравнение движения варьируемой частицы
      * @param iterations       список итераций
-     * @param results          список с объектами макроскописеских параметров,
-     *                         полученными в результате расчетов. После каждого вызова даного метода
+     * @param results          список с объектами макроскопических параметров,
+     *                         полученными в результате расчетов. После каждого вызова данного метода
      *                         в этот список записывается новый объект с рассчитанными параметрами
      * @see MotionEquationData
      * @see Iteration
@@ -148,14 +148,14 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
     }
 
     /**
-     * <p>Реализация абстрастного метода {@link Task#call()}.
+     * <p>Реализация абстрактного метода {@link Task#call()}.
      * Здесь в базу данный сохраняется новая сущность {@link ExperimentEntity},
-     * сохраняются все сущнести {@link IterationEntity}, связанные с ней
-     * и инициируется цикл по всем итерацииям задания.</p>
+     * сохраняются все сущности {@link IterationEntity}, связанные с ней
+     * и инициируется цикл по всем итерациям задания.</p>
      *
-     * @return список с объектами макроскописеских параметров, полученными в результате расчетов.
+     * @return список с объектами макроскопических параметров, полученными в результате расчетов.
      * @see Task
-     * @throws Exception исключения, которые могут возникнуть в процессе выпонения задания.
+     * @throws Exception исключения, которые могут возникнуть в процессе выполнения задания.
      */
     @Override
     protected List<AnalyzeResult> call() throws Exception {
@@ -190,7 +190,7 @@ public class ExperimentTask extends Task<List<AnalyzeResult>> {
 
     /**
      * <p>Описание событий, которые должны быть выполнены
-     * при успешном завершении всех рассчетов задания.</p>
+     * при успешном завершении всех расчетов задания.</p>
      */
     @Override
     protected void succeeded() {

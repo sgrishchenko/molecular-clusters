@@ -11,7 +11,7 @@ public class MotionEquationData {
      */
     private String label;
     /**
-     * <p>Модуль суммы сил, действующих на чатицу, описанный аналитическим выражением.</p>
+     * <p>Модуль суммы сил, действующих на частицу, описанный аналитическим выражением.</p>
      */
     private String accelerationEquation = "0";
     /**

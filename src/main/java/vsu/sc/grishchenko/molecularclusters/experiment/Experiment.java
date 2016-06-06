@@ -10,7 +10,7 @@ import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 import java.util.function.Consumer;
 
 /**
- * <p>Класс, который позволяет запускать диаоговое окно для конфигурации задания
+ * <p>Класс, который позволяет запускать диалоговое окно для конфигурации задания
  * на выполнение серии экспериментов.</p>
  *
  * @author Грищенко Сергей

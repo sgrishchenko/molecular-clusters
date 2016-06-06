@@ -6,7 +6,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -49,8 +48,8 @@ import java.util.regex.Matcher;
  */
 public class MainController {
     /**
-     * <p>Вертикальный котейнер, содержащий элементы управления(преимущественно поля ввода) для описания
-     * параметров частицы, которая будет уствовать в моделировании физической системы.</p>
+     * <p>Вертикальный контейнер, содержащий элементы управления(преимущественно поля ввода) для описания
+     * параметров частицы, которая будет участвовать в моделировании физической системы.</p>
      *
      * @see VBox
      */
@@ -62,8 +61,8 @@ public class MainController {
      */
     public FileChooser fileChooser = new FileChooser();
     /**
-     * <p>Объект для сериализации/десериализции Java-объктов
-     * в фомате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
+     * <p>Объект для сериализации/десериализции Java-объектов
+     * в формате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
      *
      * @see <a href="http://static.javadoc.io/com.google.code.gson/gson/2.6.2/com/google/gson/Gson.html">Gson</a>
      */
@@ -75,7 +74,7 @@ public class MainController {
      */
     public Label status;
     /**
-     * <p>Объект, хранящий ссылку на файл, с которым ассоцирована рабочая область приложения в текущий момент.</p>
+     * <p>Объект, хранящий ссылку на файл, с которым ассоциирована рабочая область приложения в текущий момент.</p>
      *
      * @see File
      */
@@ -84,7 +83,7 @@ public class MainController {
     /**
      * <p>В конструкторе по умолчанию инициализируются:</p>
      * <ul>
-     * <li>Начальная директория {@link MainController#fileChooser} - дирректория, откуда была запущена программа;</li>
+     * <li>Начальная директория {@link MainController#fileChooser} - директория, откуда была запущена программа;</li>
      * <li>Фильтр расширений для {@link MainController#fileChooser} - только файлы в формате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>;</li>
      * </ul>
      */
@@ -95,7 +94,7 @@ public class MainController {
     }
 
     /**
-     * <p>Метод, который реализует добаление строки в рабочей области программы (в {@link MainController#container}).</p>
+     * <p>Метод, который реализует добавление строки в рабочей области программы (в {@link MainController#container}).</p>
      *
      * @param data проинициализированный объект {@link MotionEquationData}
      * @see MotionEquationData
@@ -171,7 +170,7 @@ public class MainController {
 
     /**
      * <p>Обработчик события при нажатии на кнопку "Запустить".
-     * С помощью {@link MainController#startTask(Task, EventHandler)} pапускает фоновый процесс
+     * С помощью {@link MainController#startTask(Task, EventHandler)} запускает фоновый процесс
      * на расчет траекторий движения частиц.
      * После поле завершения расчета открывается окно, демонстрирующее трехмерную анимированную визуализацию.</p>
      *
@@ -283,7 +282,7 @@ public class MainController {
     /**
      * <p>Обработчик события при выборе в главном меню приложения пункта <i>Файл/Сохранить как...</i>.
      * Запускает диалоговое окно для выбора файла. После того, как пользователь выбрал файл,
-     * считывается информациия из рабочей области приложения и записывается в выбранный файл.</p>
+     * считывается информация из рабочей области приложения и записывается в выбранный файл.</p>
      */
     public void saveAs() {
         File file = fileChooser.showSaveDialog(container.getScene().getWindow());
@@ -296,7 +295,7 @@ public class MainController {
 
     /**
      * <p>Метод, который считывает из рабочей области информацию с помощью метода {@link MainController#read()}
-     * и записывает ей в учазанный файл с помощью объекта {@link MainController#gson}.</p>
+     * и записывает ей в указанный файл с помощью объекта {@link MainController#gson}.</p>
      *
      * @param file ссылка на файл, в который требуется сохранить информацию
      */
@@ -309,7 +308,7 @@ public class MainController {
     }
 
     /**
-     * <p>Метод, который обновляет заголовок основного окна программы, выводя информции о файле,
+     * <p>Метод, который обновляет заголовок основного окна программы, выводя информацию о файле,
      * с которым в текущий момент ассоциирована рабочая область.</p>
      */
     private void updateTitle() {
@@ -326,7 +325,7 @@ public class MainController {
 
     /**
      * <p>Метод, который выводит диалоговое окно с информацией о том,
-     * какое количество времении потребовалось для выполнения серии экспериментов.</p>
+     * какое количество времени потребовалось для выполнения серии экспериментов.</p>
      *
      * @param start время, когда задание на расчет серии экспериментов было запущено
      * @see InfoDialog
@@ -349,7 +348,7 @@ public class MainController {
 
     /**
      * <p>Обработчик события при выборе в главном меню приложения пункта <i>Файл/Настройки...</i>.
-     * Запускает диалоговое окно для установки параметров рассчетов, выполняемых в приложении.</p>
+     * Запускает диалоговое окно для установки параметров расчетов, выполняемых в приложении.</p>
      *
      * @throws Exception исключения, возникающие при работе с настройками.
      * @see Settings
@@ -362,7 +361,7 @@ public class MainController {
      * <p>Метод, который запускает фоновый процесс в приложении.</p>
      *
      * @param task        объект, описывающий процесс
-     * @param onSucceeded обработчик собития успешного завершения процесса
+     * @param onSucceeded обработчик события успешного завершения процесса
      * @see Thread
      * @see Task
      */
@@ -379,7 +378,7 @@ public class MainController {
      * <p>Обработчик события при нажатии на кнопку "Задание".
      * Открывает диалоговое окно для конфигурации серии экспериментов.
      * После того, как пользователь завершил конфигурацию,
-     * запускается фоновый процесс с помошью {@link MainController#startTask(Task, EventHandler)}.</p>
+     * запускается фоновый процесс с помощью {@link MainController#startTask(Task, EventHandler)}.</p>
      *
      * @throws Exception исключения, возникающие при конфигурации задания.
      * @see Task
@@ -398,10 +397,10 @@ public class MainController {
 
     /**
      * <p>Обработчик события при нажатии на кнопку "База".
-     * Открывает диалоговое окно, с котором можно просмотреть тректории движениия чистиц,
+     * Открывает диалоговое окно, с котором можно просмотреть траектории движения частиц,
      * сохраненные в базе данных.</p>
      *
-     * @throws Exception исключения, возникающие при просмотре тректорий движениия чистиц.
+     * @throws Exception исключения, возникающие при просмотре траекторий движения частиц.
      * @see Trajectories
      */
     public void viewTrajectories() throws Exception {

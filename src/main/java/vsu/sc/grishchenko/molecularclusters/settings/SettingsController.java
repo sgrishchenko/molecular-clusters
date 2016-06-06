@@ -18,20 +18,20 @@ import java.util.ResourceBundle;
  */
 public class SettingsController implements Initializable {
     /**
-     * <p>Основной контейнер диалового окна.</p>
+     * <p>Основной контейнер диалогового окна.</p>
      *
      * @see AnchorPane
      */
     public AnchorPane root;
     /**
-     * <p>Поле ввода количества шагов при выполнеии алгоритма численного интергирования.</p>
+     * <p>Поле ввода количества шагов при выполнении алгоритма численного интегрирования.</p>
      *
      * @see CurrentSettings#countSteps
      * @see TextField
      */
     public TextField viewCountSteps;
     /**
-     * <p>Поле ввода величина сдвига по времени при выполнеии алгоритма численного интергирования.</p>
+     * <p>Поле ввода величина сдвига по времени при выполнении алгоритма численного интегрирования.</p>
      *
      * @see CurrentSettings#stepSize
      * @see TextField

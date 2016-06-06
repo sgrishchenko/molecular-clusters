@@ -3,7 +3,7 @@ package vsu.sc.grishchenko.molecularclusters.settings;
 import vsu.sc.grishchenko.molecularclusters.animation.RunAnimate;
 
 /**
- * <p>Класс, написанный с ипользованием шаблона проектировани "Одиночка"
+ * <p>Класс, написанный с использованием шаблона проектирования "Одиночка"
  * и хранящий текущие настройки приложения.</p>
  *
  * @author Грищенко Сергей
@@ -12,11 +12,11 @@ public class CurrentSettings {
     private static CurrentSettings ourInstance = new CurrentSettings();
 
     /**
-     * <p>Количество шагов при выполнеии алгоритма численного интергирования.</p>
+     * <p>Количество шагов при выполнении алгоритма численного интергирования.</p>
      */
     private Integer countSteps = 1000;
     /**
-     * <p>Величина сдвига по времени при выполнеии алгоритма численного интергирования.</p>
+     * <p>Величина сдвига по времени при выполнении алгоритма численного интергирования.</p>
      */
     private Double stepSize = 0.001;
     /**

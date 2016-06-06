@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import vsu.sc.grishchenko.molecularclusters.util.ResourceFactory;
 
 /**
- * <p>Класс, который позволяет запускать диаоговое окно с настройками приложения.</p>
+ * <p>Класс, который позволяет запускать диалоговое окно с настройками приложения.</p>
  *
  * @author Грищенко Сергей
  * @see Application

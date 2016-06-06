@@ -29,7 +29,7 @@ import static vsu.sc.grishchenko.molecularclusters.experiment.Analyzer.toSpheric
  */
 public class ExperimentController implements Initializable {
     /**
-     * <p>Выподающий список для выбора шаблона заполнения окна конфигурации задания.</p>
+     * <p>Выпадающий список для выбора шаблона заполнения окна конфигурации задания.</p>
      *
      * @see ChoiceBox
      */
@@ -284,7 +284,7 @@ public class ExperimentController implements Initializable {
      */
     private List<Dimension> allDimensions = new ArrayList<>();
     /**
-     * <p>Действие, которое будет выполнено после успешного указания
+     * <p>Действие, которое будет выполнено после успешного ввода
      * параметров конфигурации запуска.</p>
      *
      * @see Consumer
@@ -435,7 +435,7 @@ public class ExperimentController implements Initializable {
      * <p>Обработчик события при нажатии на кнопку "OK" в диалоговом окне.
      * На основе введенных пользователем данных создается
      * и заполняется объект {@link ExperimentConfig}.
-     * Затем вызывется {@link ExperimentController#onStart},
+     * Затем вызывается {@link ExperimentController#onStart},
      * в аргумент которого передается созданный объект.</p>
      *
      * @see ExperimentConfig
@@ -461,7 +461,7 @@ public class ExperimentController implements Initializable {
 
     /**
      * <p>Обработчик события при выборе значение в элементе {@link ExperimentController#template}.
-     * Поле выбора значения форма диалогового окна заполнятся значениями,
+     * После выбора значения форма диалогового окна заполнятся значениями,
      * описанными при задании шаблона в методе {@link ExperimentController#initialize(URL, ResourceBundle)}.</p>
      *
      * @see ExperimentController#template
@@ -489,7 +489,7 @@ public class ExperimentController implements Initializable {
 
     /**
      * <p>Класс, описывающий объекты для компактной группировки
-     * элементов формы, относящихся к опреденному измерению начальных условий для варьируемой частицы.
+     * элементов формы, относящихся к определенному измерению начальных условий для варьируемой частицы.
      * Также используется для создания объектов {@link Iteration}.</p>
      *
      * @see Iteration
@@ -500,7 +500,7 @@ public class ExperimentController implements Initializable {
          */
         private String name;
         /**
-         * <p>Флажек для включения итерации по измерению.</p>
+         * <p>Флажок для включения итерации по измерению.</p>
          *
          * @see CheckBox
          */

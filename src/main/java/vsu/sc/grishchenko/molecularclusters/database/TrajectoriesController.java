@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 
 /**
  * <p>Класс-контроллер для обработки событий, происходящих в диалоговом окне просмотра списка
- * траекторий движения частиц разлихних моделей, сохраненных в базе данных.</p>
+ * траекторий движения частиц различных моделей, сохраненных в базе данных.</p>
  *
  * @author Грищенко Сергей
  * @see Trajectory
@@ -32,8 +32,8 @@ import java.util.ResourceBundle;
  */
 public class TrajectoriesController implements Initializable {
     /**
-     * <p>Объект для сериализации/десериализции Java-объктов
-     * в фомате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
+     * <p>Объект для сериализации/десериализции Java-объектов
+     * в формате <a href="https://ru.wikipedia.org/wiki/JSON">JSON</a>.</p>
      *
      * @see <a href="http://static.javadoc.io/com.google.code.gson/gson/2.6.2/com/google/gson/Gson.html">Gson</a>
      */
@@ -46,8 +46,8 @@ public class TrajectoriesController implements Initializable {
     public GridPane table;
 
     /**
-     * <p>Заполнение из базы данных списка сохраненных траекторий движениея частиц
-     * сразу поле отрытия диалогового окна.</p>
+     * <p>Заполнение из базы данных списка сохраненных траекторий движения частиц
+     * сразу после открытия диалогового окна.</p>
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
