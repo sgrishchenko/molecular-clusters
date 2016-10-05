@@ -3,6 +3,8 @@ package vsu.sc.grishchenko.molecularclusters.math;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -14,7 +16,7 @@ public final class Solver {
     /**
      * <p>Константа, используемая в регулярном выражения для добавления к
      * текстовой метке частицы префиксов <i>x</i>, <i>y</i> и <i>z</i>
-     * при формировании из одного векторного уравнения три вещественных.</p>
+     * при формировании из одного векторного уравнения трех вещественных.</p>
      */
     private final static String separatorGroup = "(\\s|\\+|\\-|\\*|/|\\(|\\))";
 
@@ -88,29 +90,44 @@ public final class Solver {
         double initialAcceleration;
         Map<String, Trajectory> result = new HashMap<>(dataList.size() * 3);
         List<MotionEquation> equations = new ArrayList<>(dataList.size() * 3);
+        Pattern templatePattern = Pattern.compile("(\\w+)\\$");
+        Pattern summablePattern = Pattern.compile("\\[(.+)\\]");
         List<Double> trajectory;
         StringBuilder compiledEquation;
+        Matcher matcher;
+        String template;
         String distance;
+        String summablePart;
 
         for (MotionEquationData data : dataList) {
-            if (data.getAccelerationEquation().contains("r$")) {
+            if (data.getAccelerationEquation().contains("$")) {
                 compiledEquation = new StringBuilder();
-                for (int i = 0; i < dataList.size(); i++) {
-                    if (!data.getLabel().equals(dataList.get(i).getLabel())) {
-                        if (compiledEquation.length() != 0 && i != 0) compiledEquation.append("+");
 
+                matcher = templatePattern.matcher(data.getAccelerationEquation());
+                if (!matcher.find()) continue;
+                template = matcher.group(1);
+
+                matcher = summablePattern.matcher(data.getAccelerationEquation());
+                if (!matcher.find()) continue;
+                summablePart = matcher.group(1);
+
+                for (int i = 0; i < dataList.size(); i++) {
+                    if (!data.getLabel().equals(dataList.get(i).getLabel())
+                            && dataList.get(i).getLabel().startsWith(template)) {
+                        if (compiledEquation.length() != 0 && i != 0) compiledEquation.append("+");
                         distance = String.format("sqrt((x%2$s-x%1$s)^2 + (y%2$s-y%1$s)^2 + (z%2$s-z%1$s)^2)",
                                 data.getLabel(), dataList.get(i).getLabel());
 
                         compiledEquation.append("(");
-                        compiledEquation.append(data.getAccelerationEquation().replaceAll("r\\$", distance));
+                        compiledEquation.append(summablePart.replaceAll(template + "\\$", distance));
                         compiledEquation.append(String.format(")*(%1$s-%2$s)/",
                                 data.getLabel(), dataList.get(i).getLabel()));
                         compiledEquation.append(distance);
 
                     }
                 }
-                data.setAccelerationEquation(compiledEquation.toString());
+                data.setAccelerationEquation(data.getAccelerationEquation()
+                        .replaceAll("\\[.+\\]", compiledEquation.toString()));
             }
             equations.add(getMotionEquation(data, 0, dataList));
             equations.add(getMotionEquation(data, 1, dataList));
